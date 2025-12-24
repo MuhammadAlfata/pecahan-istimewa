@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pecahan Pintar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --card-shadow: 0 25px 90px rgba(79, 70, 229, 0.35);
+    }
+    body {
+      font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+    }
+    .preserve-3d { transform-style: preserve-3d; }
+    .backface-hidden { backface-visibility: hidden; }
+    .perspective { perspective: 1200px; }
+    .rotate-y-180 { transform: rotateY(180deg); }
+    .pill-btn {
+      border-bottom-width: 4px;
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+    .pill-btn:hover { transform: translateY(-2px) scale(1.01); }
+    .pill-btn:active { transform: translateY(1px) scale(0.99); }
+    .glow-correct { box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2), 0 15px 50px rgba(34, 197, 94, 0.45); }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-6px); }
+      80% { transform: translateX(6px); }
+    }
+    .shake { animation: shake 450ms ease; }
+    .confetti {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      pointer-events: none;
+      font-size: 2rem;
+      opacity: 0;
+      transform: translateY(-6px) scale(0.9);
+      transition: opacity 180ms ease, transform 180ms ease;
+    }
+    .confetti.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-[#1a1f4d] via-[#251b60] to-[#3b1c85] text-white relative overflow-hidden">
+  <div class="absolute inset-0 -z-10 overflow-hidden">
+    <div class="absolute w-80 h-80 bg-purple-400/30 rounded-full blur-[120px] -top-10 -left-12"></div>
+    <div class="absolute w-96 h-96 bg-indigo-500/25 rounded-full blur-[140px] bottom-10 right-0"></div>
+    <div class="absolute w-72 h-72 bg-pink-400/20 rounded-full blur-[120px] top-1/3 left-1/2 -translate-x-1/2"></div>
+  </div>
+
+  <div class="min-h-screen flex items-center justify-center px-4 py-10">
+    <div class="w-full max-w-md">
+      <header class="text-center mb-6">
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-100">Pecahan Pintar</p>
+        <h1 class="mt-2 text-3xl font-bold text-white drop-shadow-md">Hafal cepat pecahan istimewa</h1>
+        <p class="mt-2 text-sm text-indigo-100/80">Belajar & kuis ala aplikasi, fokus hanya ke pecahan penting.</p>
+      </header>
+
+      <main class="space-y-5">
+        <!-- Main Menu -->
+        <section id="menuSection" class="bg-white/80 backdrop-blur-xl border border-white/40 rounded-3xl shadow-2xl shadow-indigo-900/30 p-6 sm:p-7">
+          <div class="space-y-3">
+            <button id="startStudy" class="pill-btn w-full px-6 py-4 rounded-full bg-gradient-to-r from-indigo-500 to-blue-500 text-white text-lg font-bold shadow-lg shadow-indigo-900/40 border-b-4 border-indigo-700 flex items-center justify-center gap-3 focus:outline-none focus:ring-4 focus:ring-indigo-300/70">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 19.5v-15a1 1 0 0 1 1.5-.86l12 7.5a1 1 0 0 1 0 1.72l-12 7.5A1 1 0 0 1 4 19.5Z"/></svg>
+              Mulai Belajar
+            </button>
+            <button id="startQuiz" class="pill-btn w-full px-6 py-4 rounded-full bg-gradient-to-r from-green-400 to-emerald-500 text-white text-lg font-bold shadow-lg shadow-emerald-900/30 border-b-4 border-emerald-700 flex items-center justify-center gap-3 focus:outline-none focus:ring-4 focus:ring-emerald-200/80">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6"/><path d="M12 16h.01"/></svg>
+              Mulai Ujian
+            </button>
+          </div>
+        </section>
+
+        <!-- Study Mode -->
+        <section id="studySection" class="hidden">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <p class="text-[11px] font-semibold text-indigo-100 uppercase tracking-[0.25em]">Mode Belajar</p>
+              <h2 class="text-2xl font-bold text-white">Kartu Pecahan</h2>
+            </div>
+            <button class="text-sm font-semibold text-indigo-100 hover:text-white transition" id="backFromStudy">Menu</button>
+          </div>
+
+          <div class="relative bg-white/85 backdrop-blur-xl rounded-3xl border border-white/40 shadow-2xl shadow-indigo-900/30 p-6 sm:p-7">
+            <div class="flex flex-wrap gap-2 mb-4">
+              <button data-denom="all" class="denom-btn pill-btn px-4 py-2 rounded-full text-sm font-semibold bg-slate-100 text-slate-800 border-b-4 border-slate-200 shadow-sm hover:scale-[1.01]">Semua</button>
+              <button data-denom="2" class="denom-btn pill-btn px-4 py-2 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-800 border-b-4 border-indigo-200 shadow-sm hover:scale-[1.01]">Penyebut 2</button>
+              <button data-denom="3" class="denom-btn pill-btn px-4 py-2 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-800 border-b-4 border-indigo-200 shadow-sm hover:scale-[1.01]">Penyebut 3</button>
+              <button data-denom="4" class="denom-btn pill-btn px-4 py-2 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-800 border-b-4 border-indigo-200 shadow-sm hover:scale-[1.01]">Penyebut 4</button>
+              <button data-denom="5" class="denom-btn pill-btn px-4 py-2 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-800 border-b-4 border-indigo-200 shadow-sm hover:scale-[1.01]">Penyebut 5</button>
+              <button data-denom="8" class="denom-btn pill-btn px-4 py-2 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-800 border-b-4 border-indigo-200 shadow-sm hover:scale-[1.01]">Penyebut 8</button>
+              <button data-denom="9" class="denom-btn pill-btn px-4 py-2 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-800 border-b-4 border-indigo-200 shadow-sm hover:scale-[1.01]">Penyebut 9</button>
+            </div>
+            <div id="flashCard" class="flip-card w-full h-64 sm:h-72 rounded-2xl bg-gradient-to-br from-indigo-400 via-indigo-500 to-purple-500 text-white shadow-xl perspective relative overflow-hidden" role="button" aria-label="Kartu pecahan">
+              <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.2),transparent_45%)]"></div>
+              <div id="cardInner" class="relative w-full h-full transition-transform duration-500 preserve-3d">
+                <div class="absolute inset-0 flex flex-col items-center justify-center backface-hidden">
+                  <p class="text-base uppercase tracking-[0.3em] text-white/80 mb-1">Pecahan</p>
+                  <div id="fractionFront" class="text-5xl sm:text-6xl font-black drop-shadow-lg"></div>
+                </div>
+                <div class="absolute inset-0 flex flex-col items-center justify-center backface-hidden rotate-y-180">
+                  <p class="text-base uppercase tracking-[0.3em] text-white/80 mb-1">Hasil</p>
+                  <div class="text-center space-y-2">
+                    <div id="decimalBack" class="text-4xl sm:text-5xl font-black drop-shadow-lg"></div>
+                    <div id="percentBack" class="text-xl sm:text-2xl font-semibold text-white/90"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6 flex items-center gap-3">
+              <button id="prevCard" class="pill-btn w-full px-5 py-3 rounded-full border border-indigo-100/80 text-indigo-800 font-semibold bg-white shadow-md shadow-indigo-900/20 border-b-4 border-b-indigo-100 hover:bg-indigo-50 transition focus:outline-none focus:ring-4 focus:ring-indigo-200/70">Sebelumnya</button>
+              <button id="nextCard" class="pill-btn w-full px-5 py-3 rounded-full bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-semibold shadow-lg shadow-indigo-900/30 border-b-4 border-indigo-700 hover:scale-[1.01] transition focus:outline-none focus:ring-4 focus:ring-indigo-300/70">Selanjutnya</button>
+            </div>
+            <p class="mt-3 text-center text-xs text-slate-600">Sentuh kartu untuk flip desimal & persen</p>
+          </div>
+        </section>
+
+        <!-- Quiz Mode -->
+        <section id="quizSection" class="hidden">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <p class="text-[11px] font-semibold text-emerald-100 uppercase tracking-[0.25em]">Mode Ujian</p>
+              <h2 class="text-2xl font-bold text-white">Tes Kilat</h2>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="px-3 py-2 rounded-full bg-white/20 border border-white/30 text-white font-semibold shadow-sm shadow-emerald-900/20">Skor: <span id="score">0</span></div>
+              <button class="text-sm font-semibold text-emerald-100 hover:text-white transition" id="backFromQuiz">Menu</button>
+            </div>
+          </div>
+
+          <div id="quizCard" class="relative bg-white/85 backdrop-blur-xl rounded-3xl border border-white/40 shadow-2xl shadow-indigo-900/30 p-6 sm:p-7 space-y-6 overflow-hidden">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(99,102,241,0.12),transparent_40%)]"></div>
+            <div class="relative flex flex-col gap-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-[11px] font-semibold text-slate-600 uppercase tracking-[0.25em]">Pertanyaan</p>
+                  <h3 class="text-lg font-bold text-slate-900" id="quizPrompt">Ubah pecahan ini ke desimal</h3>
+                </div>
+                <div class="px-4 py-2 rounded-full bg-indigo-100 text-indigo-800 border border-indigo-200 font-bold shadow-sm" id="currentFraction">1/2</div>
+              </div>
+
+              <div class="space-y-2">
+                <label for="answerInput" class="text-sm font-semibold text-slate-700">Jawaban kamu</label>
+                <input id="answerInput" type="text" inputmode="decimal" placeholder="contoh: 0.5 atau 0,5" class="w-full px-5 py-5 rounded-2xl border-2 border-transparent text-center bg-slate-50 text-2xl font-bold text-slate-900 shadow-inner focus:bg-white focus:border-indigo-400 focus:ring-4 focus:ring-indigo-200 outline-none">
+                <p class="text-xs text-slate-500 text-center">Titik atau koma, keduanya diterima.</p>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <button id="answerBtn" class="pill-btn w-full px-6 py-4 rounded-full bg-gradient-to-r from-emerald-400 to-green-500 text-white text-lg font-bold shadow-lg shadow-emerald-900/25 border-b-4 border-emerald-700 hover:scale-[1.01] transition focus:outline-none focus:ring-4 focus:ring-emerald-200/80">Jawab</button>
+                <div id="feedback" class="text-sm font-semibold min-w-[120px] text-right"></div>
+              </div>
+            </div>
+            <div id="confetti" class="confetti">🎉</div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const data = [
+      { fraction: '1/2', decimalValue: 0.5, decimalDisplay: '0.5', percentDisplay: '50%', accepted: ['0.5', '0,5'] },
+      { fraction: '3/2', decimalValue: 1.5, decimalDisplay: '1.5', percentDisplay: '150%', accepted: ['1.5', '1,5'] },
+      { fraction: '5/2', decimalValue: 2.5, decimalDisplay: '2.5', percentDisplay: '250%', accepted: ['2.5', '2,5'] },
+      { fraction: '7/2', decimalValue: 3.5, decimalDisplay: '3.5', percentDisplay: '350%', accepted: ['3.5', '3,5'] },
+
+      { fraction: '1/3', decimalValue: 1 / 3, decimalDisplay: '0.333...', percentDisplay: '33.3%', accepted: ['0.33', '0.333', '0.3333', '0.33333', '0,33', '0,333', '0,3333', '0,33333'] },
+      { fraction: '2/3', decimalValue: 2 / 3, decimalDisplay: '0.666...', percentDisplay: '66.7%', accepted: ['0.66', '0.667', '0.666', '0.6667', '0,66', '0,667', '0,666', '0,6667'] },
+      { fraction: '4/3', decimalValue: 4 / 3, decimalDisplay: '1.333...', percentDisplay: '133.3%', accepted: ['1.33', '1.333', '1.3333', '1,33', '1,333', '1,3333'] },
+
+      { fraction: '1/4', decimalValue: 0.25, decimalDisplay: '0.25', percentDisplay: '25%', accepted: ['0.25', '0,25'] },
+      { fraction: '3/4', decimalValue: 0.75, decimalDisplay: '0.75', percentDisplay: '75%', accepted: ['0.75', '0.750', '0,75', '0,750'] },
+
+      { fraction: '1/5', decimalValue: 0.2, decimalDisplay: '0.2', percentDisplay: '20%', accepted: ['0.2', '0.20', '0,2', '0,20'] },
+      { fraction: '3/5', decimalValue: 0.6, decimalDisplay: '0.6', percentDisplay: '60%', accepted: ['0.6', '0.60', '0,6', '0,60'] },
+      { fraction: '4/5', decimalValue: 0.8, decimalDisplay: '0.8', percentDisplay: '80%', accepted: ['0.8', '0.80', '0,8', '0,80'] },
+
+      { fraction: '1/8', decimalValue: 0.125, decimalDisplay: '0.125', percentDisplay: '12.5%', accepted: ['0.125', '0.12', '0.13', '0,125', '0,12', '0,13'] },
+      { fraction: '2/8', decimalValue: 0.25, decimalDisplay: '0.25', percentDisplay: '25%', accepted: ['0.25', '0,25'] },
+      { fraction: '3/8', decimalValue: 0.375, decimalDisplay: '0.375', percentDisplay: '37.5%', accepted: ['0.375', '0.38', '0,375', '0,38'] },
+      { fraction: '5/8', decimalValue: 0.625, decimalDisplay: '0.625', percentDisplay: '62.5%', accepted: ['0.625', '0.63', '0,625', '0,63'] },
+      { fraction: '7/8', decimalValue: 0.875, decimalDisplay: '0.875', percentDisplay: '87.5%', accepted: ['0.875', '0.88', '0,875', '0,88'] },
+
+      { fraction: '1/9', decimalValue: 1 / 9, decimalDisplay: '0.111...', percentDisplay: '11.1%', accepted: ['0.11', '0.111', '0.1111', '0.11111', '0,11', '0,111', '0,1111', '0,11111'] },
+      { fraction: '2/9', decimalValue: 2 / 9, decimalDisplay: '0.222...', percentDisplay: '22.2%', accepted: ['0.22', '0.222', '0.2222', '0.22222', '0,22', '0,222', '0,2222', '0,22222'] },
+      { fraction: '3/9', decimalValue: 3 / 9, decimalDisplay: '0.333...', percentDisplay: '33.3%', accepted: ['0.33', '0.333', '0.3333', '0.33333', '0,33', '0,333', '0,3333', '0,33333'] },
+      { fraction: '4/9', decimalValue: 4 / 9, decimalDisplay: '0.444...', percentDisplay: '44.4%', accepted: ['0.44', '0.444', '0.4444', '0.44444', '0,44', '0,444', '0,4444', '0,44444'] },
+    ];
+
+    const menuSection = document.getElementById('menuSection');
+    const studySection = document.getElementById('studySection');
+    const quizSection = document.getElementById('quizSection');
+    const startStudy = document.getElementById('startStudy');
+    const startQuiz = document.getElementById('startQuiz');
+    const backFromStudy = document.getElementById('backFromStudy');
+    const backFromQuiz = document.getElementById('backFromQuiz');
+
+    const fractionFront = document.getElementById('fractionFront');
+    const decimalBack = document.getElementById('decimalBack');
+    const percentBack = document.getElementById('percentBack');
+    const cardInner = document.getElementById('cardInner');
+    const flashCard = document.getElementById('flashCard');
+    const prevCard = document.getElementById('prevCard');
+    const nextCard = document.getElementById('nextCard');
+    const denomButtons = Array.from(document.querySelectorAll('.denom-btn'));
+
+    const currentFraction = document.getElementById('currentFraction');
+    const scoreEl = document.getElementById('score');
+    const answerInput = document.getElementById('answerInput');
+    const answerBtn = document.getElementById('answerBtn');
+    const feedback = document.getElementById('feedback');
+    const quizCard = document.getElementById('quizCard');
+    const confetti = document.getElementById('confetti');
+
+    let studyIndex = 0;
+    let studyFilter = 'all';
+    let quizFraction = null;
+    let score = 0;
+    let quizState = 'waiting'; // waiting | review
+    let quizTimer = null;
+    let confettiTimer = null;
+
+    function showSection(section) {
+      menuSection.classList.toggle('hidden', section !== 'menu');
+      studySection.classList.toggle('hidden', section !== 'study');
+      quizSection.classList.toggle('hidden', section !== 'quiz');
+    }
+
+    function filteredStudyData() {
+      return data.filter(item => {
+        if (studyFilter === 'all') return true;
+        const denom = item.fraction.split('/')[1];
+        return denom === String(studyFilter);
+      });
+    }
+
+    function renderCard() {
+      const list = filteredStudyData();
+      if (!list.length) return;
+      studyIndex = ((studyIndex % list.length) + list.length) % list.length;
+      const item = list[studyIndex];
+      fractionFront.textContent = item.fraction;
+      decimalBack.textContent = item.decimalDisplay;
+      percentBack.textContent = item.percentDisplay;
+      cardInner.classList.remove('rotate-y-180');
+    }
+
+    function normalizeInput(value) {
+      return value.trim().replace(',', '.');
+    }
+
+    function isAcceptedAnswer(input, item) {
+      const normalized = normalizeInput(input);
+      if (!normalized) return false;
+      const acceptedMatch = item.accepted.some(acc => normalized === normalizeInput(acc));
+      if (acceptedMatch) return true;
+
+      const numeric = Number(normalized);
+      if (!Number.isNaN(numeric)) {
+        return Math.abs(numeric - item.decimalValue) < 0.002;
+      }
+      return false;
+    }
+
+    function nextQuizQuestion() {
+      if (quizTimer) {
+        clearTimeout(quizTimer);
+        quizTimer = null;
+      }
+      if (confettiTimer) {
+        clearTimeout(confettiTimer);
+        confettiTimer = null;
+      }
+      quizCard.classList.remove('glow-correct', 'shake');
+      confetti.classList.remove('show');
+      quizFraction = data[Math.floor(Math.random() * data.length)];
+      currentFraction.textContent = quizFraction.fraction;
+      feedback.textContent = '';
+      feedback.className = 'text-sm font-semibold';
+      answerInput.value = '';
+      answerInput.focus();
+      answerBtn.textContent = 'Jawab';
+      quizState = 'waiting';
+    }
+
+    startStudy.addEventListener('click', () => {
+      showSection('study');
+      renderCard();
+    });
+
+    answerInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        answerBtn.click();
+      }
+    });
+
+    startQuiz.addEventListener('click', () => {
+      showSection('quiz');
+      nextQuizQuestion();
+    });
+
+    backFromStudy.addEventListener('click', () => showSection('menu'));
+    backFromQuiz.addEventListener('click', () => showSection('menu'));
+
+    flashCard.addEventListener('click', () => {
+      cardInner.classList.toggle('rotate-y-180');
+    });
+
+    prevCard.addEventListener('click', () => {
+      const total = filteredStudyData().length;
+      studyIndex = (studyIndex - 1 + total) % total;
+      renderCard();
+    });
+
+    nextCard.addEventListener('click', () => {
+      const total = filteredStudyData().length;
+      studyIndex = (studyIndex + 1) % total;
+      renderCard();
+    });
+
+    function setStudyFilter(value) {
+      studyFilter = value;
+      studyIndex = 0;
+      denomButtons.forEach(btn => {
+        const active = btn.dataset.denom === String(value);
+        btn.classList.toggle('bg-indigo-500', active);
+        btn.classList.toggle('text-white', active);
+        btn.classList.toggle('border-indigo-700', active);
+        btn.classList.toggle('shadow-indigo-900/30', active);
+      });
+      renderCard();
+    }
+
+    denomButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        setStudyFilter(btn.dataset.denom);
+      });
+    });
+
+    answerBtn.addEventListener('click', () => {
+      if (quizState === 'review') {
+        if (quizTimer) {
+          clearTimeout(quizTimer);
+          quizTimer = null;
+        }
+        if (confettiTimer) {
+          clearTimeout(confettiTimer);
+          confettiTimer = null;
+        }
+        nextQuizQuestion();
+        return;
+      }
+
+      const userAnswer = answerInput.value;
+      if (!userAnswer.trim()) {
+        feedback.textContent = 'Masukkan jawaban terlebih dahulu.';
+        feedback.className = 'text-sm font-semibold text-amber-600';
+        return;
+      }
+
+      if (isAcceptedAnswer(userAnswer, quizFraction)) {
+        score += 10;
+        scoreEl.textContent = score;
+        feedback.textContent = `Benar! ${quizFraction.fraction} = ${quizFraction.decimalDisplay} (${quizFraction.percentDisplay})`;
+        feedback.className = 'text-sm font-semibold text-green-600';
+        answerBtn.textContent = 'Berikutnya...';
+        quizState = 'review';
+        quizCard.classList.add('glow-correct');
+        confetti.classList.add('show');
+        confettiTimer = setTimeout(() => {
+          confetti.classList.remove('show');
+          confettiTimer = null;
+        }, 700);
+        quizTimer = setTimeout(() => {
+          quizTimer = null;
+          nextQuizQuestion();
+        }, 1500);
+      } else {
+        feedback.textContent = `Belum tepat. Jawaban: ${quizFraction.decimalDisplay} (${quizFraction.percentDisplay})`;
+        feedback.className = 'text-sm font-semibold text-red-600';
+        answerBtn.textContent = 'Lanjut';
+        quizState = 'review';
+        quizCard.classList.remove('glow-correct');
+        confetti.classList.remove('show');
+        quizCard.classList.add('shake');
+        setTimeout(() => quizCard.classList.remove('shake'), 500);
+      }
+    });
+
+    renderCard();
+    setStudyFilter('all');
+  </script>
+</body>
+</html>
