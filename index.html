@@ -200,6 +200,9 @@
             <div class="flex items-center gap-2">
               <button class="px-3 py-2 rounded-full bg-white/15 border border-white/25 text-white text-xs font-semibold"
                 id="studyTimer" type="button">00:00</button>
+              <button
+                class="px-3 py-2 rounded-full bg-white/15 border border-white/25 text-white text-xs font-semibold hover:bg-white/25 transition"
+                id="studyFilterBtn" type="button">Semua</button>
               <button class="text-sm font-semibold text-indigo-100 hover:text-white transition"
                 id="backFromStudy">Menu</button>
             </div>
@@ -228,27 +231,38 @@
                   batas</button>
               </div>
             </div>
-            <div class="flex flex-wrap gap-2 mb-4">
-              <button data-denom="all"
-                class="denom-btn pill-btn px-4 py-2 rounded-full text-sm font-semibold bg-slate-100 text-slate-800 border-b-4 border-slate-200 shadow-sm hover:scale-[1.01]">Semua</button>
-              <button data-denom="2"
-                class="denom-btn pill-btn px-4 py-2 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-800 border-b-4 border-indigo-200 shadow-sm hover:scale-[1.01]">Penyebut
-                2</button>
-              <button data-denom="3"
-                class="denom-btn pill-btn px-4 py-2 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-800 border-b-4 border-indigo-200 shadow-sm hover:scale-[1.01]">Penyebut
-                3</button>
-              <button data-denom="4"
-                class="denom-btn pill-btn px-4 py-2 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-800 border-b-4 border-indigo-200 shadow-sm hover:scale-[1.01]">Penyebut
-                4</button>
-              <button data-denom="5"
-                class="denom-btn pill-btn px-4 py-2 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-800 border-b-4 border-indigo-200 shadow-sm hover:scale-[1.01]">Penyebut
-                5</button>
-              <button data-denom="8"
-                class="denom-btn pill-btn px-4 py-2 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-800 border-b-4 border-indigo-200 shadow-sm hover:scale-[1.01]">Penyebut
-                8</button>
-              <button data-denom="9"
-                class="denom-btn pill-btn px-4 py-2 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-800 border-b-4 border-indigo-200 shadow-sm hover:scale-[1.01]">Penyebut
-                9</button>
+            <div id="studyFilterPanel"
+              class="hidden relative z-10 mb-5 bg-white/50 p-4 rounded-2xl border border-white/40 backdrop-blur-sm">
+              <div class="flex items-center justify-between mb-3">
+                <p class="text-xs font-bold text-slate-600">Pilih kartu pecahan</p>
+                <span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">Bisa pilih
+                  banyak</span>
+              </div>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <button data-denom="all"
+                  class="denom-btn pill-btn px-4 py-2 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border-b-4 border-slate-200 shadow-sm hover:scale-[1.01] transition-all">Semua</button>
+                <button data-denom="2"
+                  class="denom-btn pill-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-indigo-900 border-b-4 border-indigo-100 shadow-sm hover:scale-[1.01] transition-all">Penyebut
+                  2</button>
+                <button data-denom="3"
+                  class="denom-btn pill-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-indigo-900 border-b-4 border-indigo-100 shadow-sm hover:scale-[1.01] transition-all">Penyebut
+                  3</button>
+                <button data-denom="4"
+                  class="denom-btn pill-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-indigo-900 border-b-4 border-indigo-100 shadow-sm hover:scale-[1.01] transition-all">Penyebut
+                  4</button>
+                <button data-denom="5"
+                  class="denom-btn pill-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-indigo-900 border-b-4 border-indigo-100 shadow-sm hover:scale-[1.01] transition-all">Penyebut
+                  5</button>
+                <button data-denom="8"
+                  class="denom-btn pill-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-indigo-900 border-b-4 border-indigo-100 shadow-sm hover:scale-[1.01] transition-all">Penyebut
+                  8</button>
+                <button data-denom="9"
+                  class="denom-btn pill-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-indigo-900 border-b-4 border-indigo-100 shadow-sm hover:scale-[1.01] transition-all">Penyebut
+                  9</button>
+              </div>
+              <button id="applyStudyFilter"
+                class="w-full py-3 rounded-xl bg-indigo-600 text-white text-sm font-bold shadow-lg shadow-indigo-500/30 active:scale-[0.98] transition-transform">Terapkan
+                Filter</button>
             </div>
             <div id="flashCard"
               class="flip-card w-full h-64 sm:h-72 rounded-2xl bg-gradient-to-br from-indigo-400 via-indigo-500 to-purple-500 text-white shadow-xl perspective relative overflow-hidden"
@@ -322,30 +336,38 @@
                   batas</button>
               </div>
             </div>
-            <div id="quizFilterPanel" class="hidden relative z-10 mb-5">
-              <p class="text-xs font-semibold text-slate-500 mb-2">Pilih soal pecahan</p>
-              <div class="flex flex-wrap gap-2">
+            <div id="quizFilterPanel"
+              class="hidden relative z-10 mb-5 bg-white/50 p-4 rounded-2xl border border-white/40 backdrop-blur-sm">
+              <div class="flex items-center justify-between mb-3">
+                <p class="text-xs font-bold text-slate-600">Pilih soal pecahan</p>
+                <span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">Bisa pilih
+                  banyak</span>
+              </div>
+              <div class="flex flex-wrap gap-2 mb-4">
                 <button data-quiz-denom="all"
-                  class="quiz-denom-btn pill-btn px-4 py-2 rounded-full text-xs font-semibold bg-slate-100 text-slate-800 border-b-4 border-slate-200 shadow-sm hover:scale-[1.01]">Semua</button>
+                  class="quiz-denom-btn pill-btn px-4 py-2 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border-b-4 border-slate-200 shadow-sm hover:scale-[1.01] transition-all">Semua</button>
                 <button data-quiz-denom="2"
-                  class="quiz-denom-btn pill-btn px-4 py-2 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 border-b-4 border-indigo-200 shadow-sm hover:scale-[1.01]">Penyebut
+                  class="quiz-denom-btn pill-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-indigo-900 border-b-4 border-indigo-100 shadow-sm hover:scale-[1.01] transition-all">Penyebut
                   2</button>
                 <button data-quiz-denom="3"
-                  class="quiz-denom-btn pill-btn px-4 py-2 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 border-b-4 border-indigo-200 shadow-sm hover:scale-[1.01]">Penyebut
+                  class="quiz-denom-btn pill-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-indigo-900 border-b-4 border-indigo-100 shadow-sm hover:scale-[1.01] transition-all">Penyebut
                   3</button>
                 <button data-quiz-denom="4"
-                  class="quiz-denom-btn pill-btn px-4 py-2 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 border-b-4 border-indigo-200 shadow-sm hover:scale-[1.01]">Penyebut
+                  class="quiz-denom-btn pill-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-indigo-900 border-b-4 border-indigo-100 shadow-sm hover:scale-[1.01] transition-all">Penyebut
                   4</button>
                 <button data-quiz-denom="5"
-                  class="quiz-denom-btn pill-btn px-4 py-2 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 border-b-4 border-indigo-200 shadow-sm hover:scale-[1.01]">Penyebut
+                  class="quiz-denom-btn pill-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-indigo-900 border-b-4 border-indigo-100 shadow-sm hover:scale-[1.01] transition-all">Penyebut
                   5</button>
                 <button data-quiz-denom="8"
-                  class="quiz-denom-btn pill-btn px-4 py-2 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 border-b-4 border-indigo-200 shadow-sm hover:scale-[1.01]">Penyebut
+                  class="quiz-denom-btn pill-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-indigo-900 border-b-4 border-indigo-100 shadow-sm hover:scale-[1.01] transition-all">Penyebut
                   8</button>
                 <button data-quiz-denom="9"
-                  class="quiz-denom-btn pill-btn px-4 py-2 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-800 border-b-4 border-indigo-200 shadow-sm hover:scale-[1.01]">Penyebut
+                  class="quiz-denom-btn pill-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-indigo-900 border-b-4 border-indigo-100 shadow-sm hover:scale-[1.01] transition-all">Penyebut
                   9</button>
               </div>
+              <button id="applyQuizFilter"
+                class="w-full py-3 rounded-xl bg-indigo-600 text-white text-sm font-bold shadow-lg shadow-indigo-500/30 active:scale-[0.98] transition-transform">Terapkan
+                Filter</button>
             </div>
             <div
               class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_70%_20%,rgba(99,102,241,0.12),transparent_40%)]">
@@ -440,17 +462,21 @@
     const studyTimer = document.getElementById('studyTimer');
     const quizTimer = document.getElementById('quizTimer');
     const studyTimerPanel = document.getElementById('studyTimerPanel');
+    const studyFilterPanel = document.getElementById('studyFilterPanel');
+    const studyFilterBtn = document.getElementById('studyFilterBtn');
+    const applyStudyFilter = document.getElementById('applyStudyFilter');
     const quizTimerPanel = document.getElementById('quizTimerPanel');
     const quizFilterPanel = document.getElementById('quizFilterPanel');
     const quizFilterBtn = document.getElementById('quizFilterBtn');
+    const applyQuizFilter = document.getElementById('applyQuizFilter');
     const quizDenomButtons = Array.from(document.querySelectorAll('.quiz-denom-btn'));
 
     const timerOptions = Array.from(document.querySelectorAll('.timer-option'));
     const studyHint = document.getElementById('studyHint');
 
     let studyIndex = 0;
-    let studyFilter = 'all';
-    let quizFilter = 'all';
+    let studyFilter = ['all'];
+    let quizFilter = ['all']; // array of strings
     let quizFraction = null;
     let score = 0;
     let quizState = 'waiting'; // waiting | review
@@ -471,7 +497,10 @@
       quizSection.classList.toggle('hidden', section !== 'quiz');
       appShell.classList.toggle('menu-center', section === 'menu');
       appContent.classList.toggle('menu-stack', section === 'menu');
-      if (section === 'study') startTimer('study');
+      if (section === 'study') {
+        startTimer('study');
+        updateStudyFilterUI();
+      }
       if (section === 'quiz') startTimer('quiz');
       if (section === 'menu') stopTimer();
       if (section === 'study') maybeShowStudyHint();
@@ -479,17 +508,17 @@
 
     function filteredStudyData() {
       return data.filter(item => {
-        if (studyFilter === 'all') return true;
+        if (studyFilter.includes('all')) return true;
         const denom = item.fraction.split('/')[1];
-        return denom === String(studyFilter);
+        return studyFilter.includes(denom);
       });
     }
 
     function filteredQuizData() {
       return data.filter(item => {
-        if (quizFilter === 'all') return true;
+        if (quizFilter.includes('all')) return true;
         const denom = item.fraction.split('/')[1];
-        return denom === String(quizFilter);
+        return quizFilter.includes(denom);
       });
     }
 
@@ -644,6 +673,7 @@
     function toggleTimerPanel(mode) {
       if (mode === 'study') {
         studyTimerPanel.classList.toggle('hidden');
+        studyFilterPanel.classList.add('hidden'); // Close filter if timer opens
         quizTimerPanel.classList.add('hidden');
       }
       if (mode === 'quiz') {
@@ -651,6 +681,11 @@
         quizFilterPanel.classList.add('hidden'); // Close filter if timer opens
         studyTimerPanel.classList.add('hidden');
       }
+    }
+
+    function toggleStudyFilterPanel() {
+      studyFilterPanel.classList.toggle('hidden');
+      studyTimerPanel.classList.add('hidden'); // Close timer if filter opens
     }
 
     function toggleQuizFilterPanel() {
@@ -775,44 +810,190 @@
     showSection('menu');
     renderCard();
     setStudyFilter('all');
+    updateStudyFilterUI();
+
+    studyFilterBtn.addEventListener('click', toggleStudyFilterPanel);
+
+    applyStudyFilter.addEventListener('click', () => {
+      studyFilterPanel.classList.add('hidden');
+      studyTimerPanel.classList.add('hidden');
+      studyIndex = 0; // Reset index on filter change
+      renderCard();
+
+      // Update header button text
+      if (studyFilter.includes('all')) {
+        studyFilterBtn.textContent = 'Semua';
+      } else if (studyFilter.length === 0) {
+        studyFilterBtn.textContent = 'Semua'; // Fallout fallback
+      } else {
+        const sorted = [...studyFilter].sort((a, b) => Number(a) - Number(b));
+        if (sorted.length <= 2) {
+          studyFilterBtn.textContent = 'Penyebut ' + sorted.join(', ');
+        } else {
+          studyFilterBtn.textContent = sorted.length + ' Dipilih';
+        }
+      }
+    });
+
+    function toggleStudyFilterValue(value) {
+      if (value === 'all') {
+        studyFilter = ['all'];
+      } else {
+        // Remove 'all' if present
+        if (studyFilter.includes('all')) {
+          studyFilter = [];
+        }
+
+        const index = studyFilter.indexOf(value);
+        if (index > -1) {
+          studyFilter.splice(index, 1);
+        } else {
+          studyFilter.push(value);
+        }
+
+        // Check if empty, revert to all
+        if (studyFilter.length === 0) {
+          studyFilter = ['all'];
+        }
+      }
+
+      updateStudyFilterUI();
+    }
+
+    function updateStudyFilterUI() {
+      denomButtons.forEach(btn => {
+        const val = btn.dataset.denom;
+        const isActive = studyFilter.includes(val);
+
+        // Reset
+        btn.className = 'denom-btn pill-btn px-4 py-2 rounded-full text-xs font-bold border-b-4 shadow-sm hover:scale-[1.01] transition-all';
+
+        if (isActive) {
+          btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-800', 'shadow-indigo-900/40');
+        } else {
+          btn.classList.add('bg-white', 'text-slate-600', 'border-slate-200');
+        }
+      });
+    }
+
+    function setStudyFilter(value) {
+      // Legacy wrapper or if we need direct set
+      toggleStudyFilterValue(value);
+    }
+
+    // Override existing listener logic
+    denomButtons.forEach(btn => {
+      // remove old listener if possible (not easily in vanilla JS without tracking functions), 
+      // but we can just make sure we don't duplicate logic if we replace the element or just update what the listener does.
+      // Since we are replacing the HTML of buttons, the old listeners are gone!
+      // We need to re-add listeners to the NEW buttons.
+    });
+
+    // Because we replaced the HTML in step 2 (chunk 1), the old buttons are gone. 
+    // We need to re-select them.
+    // wait, `denomButtons` variable holds reference to OLD buttons if defined by `const`.
+    // We need to re-query the buttons.
+    const newDenomButtons = Array.from(document.querySelectorAll('.denom-btn'));
+    newDenomButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        toggleStudyFilterValue(btn.dataset.denom);
+      });
+    });
+
+    // Re-assign to global var if we want to use it elsewhere, but checking usage:
+    // It's used in updateStudyFilterUI, so we should update the global variable or pass it.
+    // Since `denomButtons` is const, we cannot reassign it. We should use `newDenomButtons` inside `updateStudyFilterUI` or change `const` to `let`.
+    // But `denomButtons` was defined way up. 
+    // Best approach: In `updateStudyFilterUI`, re-query or use `document.querySelectorAll`.
+    // Actually, I can't change `const` to `let` easily without finding the definition line.
+    // I see line 431: const denomButtons = ...
+    // I can't change that easily without a massive replace.
+    // I'll make updateStudyFilterUI query the selector directly.
+
+    function updateStudyFilterUI() {
+      const currentButtons = document.querySelectorAll('.denom-btn');
+      currentButtons.forEach(btn => {
+        const val = btn.dataset.denom;
+        const isActive = studyFilter.includes(val);
+
+        // Reset
+        btn.className = 'denom-btn pill-btn px-4 py-2 rounded-full text-xs font-bold border-b-4 shadow-sm hover:scale-[1.01] transition-all';
+
+        if (isActive) {
+          btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-800', 'shadow-indigo-900/40');
+        } else {
+          btn.classList.add('bg-white', 'text-slate-600', 'border-slate-200');
+        }
+      });
+    }
 
     quizFilterBtn.addEventListener('click', toggleQuizFilterPanel);
 
-    function setQuizFilter(value) {
-      quizFilter = value;
+    // Close panel and refresh question
+    applyQuizFilter.addEventListener('click', () => {
+      quizFilterPanel.classList.add('hidden');
+      quizTimerPanel.classList.add('hidden');
+      nextQuizQuestion();
 
-      // Update UI buttons
-      quizDenomButtons.forEach(btn => {
-        const active = btn.dataset.quizDenom === String(value);
-        // Reset base classes
-        btn.className = 'quiz-denom-btn pill-btn px-4 py-2 rounded-full text-xs font-semibold border-b-4 shadow-sm hover:scale-[1.01] transition';
-        if (active) {
-          btn.classList.add('bg-indigo-500', 'text-white', 'border-indigo-700', 'shadow-indigo-900/30');
-        } else {
-          // For inactive, check if it's "all" or others to match study style (slate for all, indigo for others)
-          if (btn.dataset.quizDenom === 'all') {
-            btn.classList.add('bg-slate-100', 'text-slate-800', 'border-slate-200');
-          } else {
-            btn.classList.add('bg-indigo-100', 'text-indigo-800', 'border-indigo-200');
-          }
-        }
-      });
-
-      // Update toggle button text
-      if (value === 'all') {
+      // Update header button text
+      if (quizFilter.includes('all')) {
         quizFilterBtn.textContent = 'Semua';
+      } else if (quizFilter.length === 0) {
+        quizFilterBtn.textContent = 'Semua'; // Fallout fallback
       } else {
-        quizFilterBtn.textContent = 'Penyebut ' + value;
+        const sorted = [...quizFilter].sort((a, b) => Number(a) - Number(b));
+        if (sorted.length <= 2) {
+          quizFilterBtn.textContent = 'Penyebut ' + sorted.join(', ');
+        } else {
+          quizFilterBtn.textContent = sorted.length + ' Dipilih';
+        }
+      }
+    });
+
+    function toggleQuizFilterValue(value) {
+      if (value === 'all') {
+        quizFilter = ['all'];
+      } else {
+        // Remove 'all' if present
+        if (quizFilter.includes('all')) {
+          quizFilter = [];
+        }
+
+        const index = quizFilter.indexOf(value);
+        if (index > -1) {
+          quizFilter.splice(index, 1);
+        } else {
+          quizFilter.push(value);
+        }
+
+        // Check if empty, revert to all
+        if (quizFilter.length === 0) {
+          quizFilter = ['all'];
+        }
       }
 
-      // Hide panel and get new question
-      quizFilterPanel.classList.add('hidden');
-      nextQuizQuestion();
+      updateQuizFilterUI();
+    }
+
+    function updateQuizFilterUI() {
+      quizDenomButtons.forEach(btn => {
+        const val = btn.dataset.quizDenom;
+        const isActive = quizFilter.includes(val);
+
+        // Reset
+        btn.className = 'quiz-denom-btn pill-btn px-4 py-2 rounded-full text-xs font-bold border-b-4 shadow-sm hover:scale-[1.01] transition-all';
+
+        if (isActive) {
+          btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-800', 'shadow-indigo-900/40');
+        } else {
+          btn.classList.add('bg-white', 'text-slate-600', 'border-slate-200');
+        }
+      });
     }
 
     quizDenomButtons.forEach(btn => {
       btn.addEventListener('click', () => {
-        setQuizFilter(btn.dataset.quizDenom);
+        toggleQuizFilterValue(btn.dataset.quizDenom);
       });
     });
   </script>
