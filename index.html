@@ -159,9 +159,10 @@
   <div id="appShell" class="min-h-[100svh] flex flex-col items-center justify-start px-4 py-6 sm:py-10">
     <div id="appContent" class="w-full max-w-md">
       <header class="text-center mb-8 sm:mb-6">
-        <p class="text-[11px] font-semibold uppercase tracking-[0.25em] text-indigo-100">Pecahan Pintar</p>
-        <p class="mt-2 text-[13px] sm:text-sm text-indigo-100/80 leading-snug">Belajar & kuis ala aplikasi, fokus hanya
-          ke pecahan penting.</p>
+        <h1 class="text-2xl font-black text-white drop-shadow-md">Math Master</h1>
+        <p class="text-[11px] font-semibold uppercase tracking-[0.25em] text-indigo-200 mt-1">Latihan Matematika</p>
+        <p class="mt-2 text-[13px] sm:text-sm text-indigo-100/80 leading-snug">Eksplorasi Pecahan & Asah Otak dengan
+          Hitung Cepat!</p>
       </header>
 
       <main class="space-y-5">
@@ -186,6 +187,14 @@
                 <path d="M12 16h.01" />
               </svg>
               Mulai Ujian
+            </button>
+            <button id="startSpeedMath"
+              class="pill-btn w-full px-6 py-4 rounded-full bg-gradient-to-r from-orange-400 to-amber-500 text-white text-lg font-bold shadow-lg shadow-amber-900/30 border-b-4 border-amber-700 flex items-center justify-center gap-3 focus:outline-none focus:ring-4 focus:ring-amber-200/80">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+                stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+              </svg>
+              Hitung Cepat
             </button>
           </div>
         </section>
@@ -399,6 +408,118 @@
             <div id="confetti" class="confetti">🎉</div>
           </div>
         </section>
+
+        <!-- Speed Math Mode -->
+        <section id="speedMathSection" class="hidden">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <p class="text-[11px] font-semibold text-amber-100 uppercase tracking-[0.25em]">Mode Latihan</p>
+              <h2 class="text-2xl font-bold text-white">Hitung Cepat</h2>
+            </div>
+            <div class="flex items-center gap-2">
+              <button
+                class="px-3 py-2 rounded-full bg-white/20 border border-white/30 text-white text-xs font-semibold hover:bg-white/30 transition shadow-sm shadow-amber-900/20"
+                id="speedMathTimer" type="button">00:00</button>
+              <button
+                class="px-3 py-2 rounded-full bg-white/20 border border-white/30 text-white text-xs font-semibold hover:bg-white/30 transition shadow-sm shadow-amber-900/20 flex items-center gap-1"
+                id="speedMathSettingsBtn" type="button">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                  </path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                Atur
+              </button>
+              <div
+                class="px-3 py-2 rounded-full bg-white/20 border border-white/30 text-white font-semibold shadow-sm shadow-amber-900/20">
+                Skor: <span id="speedMathScore">0</span></div>
+              <button class="text-sm font-semibold text-amber-100 hover:text-white transition"
+                id="backFromSpeedMath">Menu</button>
+            </div>
+          </div>
+
+          <div id="speedMathCard"
+            class="relative bg-white/85 backdrop-blur-xl rounded-3xl border border-white/40 shadow-2xl shadow-indigo-900/30 p-6 sm:p-7 space-y-6 overflow-hidden">
+
+            <div id="speedMathSettingsPanel"
+              class="hidden relative z-10 bg-white/50 p-5 rounded-2xl border border-white/40 backdrop-blur-sm shadow-lg mb-5 space-y-4">
+              <div>
+                <p class="text-xs font-bold text-slate-700 mb-2">Operasi (Pilih minimal 1)</p>
+                <div class="flex flex-wrap gap-2">
+                  <button data-sm-op="add"
+                    class="sm-op-btn pill-btn px-4 py-2 rounded-full text-sm font-bold bg-amber-500 text-white border-b-4 border-amber-700 shadow-sm hover:scale-[1.01] transition-all">+</button>
+                  <button data-sm-op="sub"
+                    class="sm-op-btn pill-btn px-4 py-2 rounded-full text-sm font-bold bg-amber-500 text-white border-b-4 border-amber-700 shadow-sm hover:scale-[1.01] transition-all">-</button>
+                  <button data-sm-op="mul"
+                    class="sm-op-btn pill-btn px-4 py-2 rounded-full text-sm font-bold bg-amber-500 text-white border-b-4 border-amber-700 shadow-sm hover:scale-[1.01] transition-all">&times;</button>
+                  <button data-sm-op="div"
+                    class="sm-op-btn pill-btn px-4 py-2 rounded-full text-sm font-bold bg-amber-500 text-white border-b-4 border-amber-700 shadow-sm hover:scale-[1.01] transition-all">&divide;</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-slate-700 mb-2">Angka Maksimal (Rentang)</p>
+                <div class="flex flex-wrap gap-2">
+                  <button data-sm-range="10"
+                    class="sm-range-btn pill-btn px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border-b-4 border-slate-200 shadow-sm hover:scale-[1.01] transition-all">10</button>
+                  <button data-sm-range="20"
+                    class="sm-range-btn pill-btn px-3 py-1.5 rounded-full text-xs font-bold bg-amber-500 text-white border-b-4 border-amber-700 shadow-sm hover:scale-[1.01] transition-all">20</button>
+                  <button data-sm-range="50"
+                    class="sm-range-btn pill-btn px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border-b-4 border-slate-200 shadow-sm hover:scale-[1.01] transition-all">50</button>
+                  <button data-sm-range="100"
+                    class="sm-range-btn pill-btn px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border-b-4 border-slate-200 shadow-sm hover:scale-[1.01] transition-all">100</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-slate-700 mb-2">Durasi Waktu</p>
+                <div class="flex flex-wrap gap-2">
+                  <button data-sm-time="1"
+                    class="sm-time-btn pill-btn px-3 py-1.5 rounded-full text-xs font-bold bg-amber-500 text-white border-b-4 border-amber-700 shadow-sm hover:scale-[1.01] transition-all">1
+                    Menit</button>
+                  <button data-sm-time="3"
+                    class="sm-time-btn pill-btn px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border-b-4 border-slate-200 shadow-sm hover:scale-[1.01] transition-all">3
+                    Menit</button>
+                  <button data-sm-time="5"
+                    class="sm-time-btn pill-btn px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border-b-4 border-slate-200 shadow-sm hover:scale-[1.01] transition-all">5
+                    Menit</button>
+                  <button data-sm-time="0"
+                    class="sm-time-btn pill-btn px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border-b-4 border-slate-200 shadow-sm hover:scale-[1.01] transition-all">Tahpa
+                    Batas</button>
+                </div>
+              </div>
+              <button id="applySpeedMathSettings"
+                class="w-full mt-3 py-3 rounded-xl bg-amber-600 text-white text-sm font-bold shadow-lg shadow-amber-500/30 active:scale-[0.98] transition-transform">Simpan
+                & Mulai</button>
+            </div>
+
+            <div
+              class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_70%_20%,rgba(245,158,11,0.12),transparent_40%)]">
+            </div>
+
+            <div id="speedMathPlayArea" class="relative flex flex-col gap-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-[11px] font-semibold text-slate-600 uppercase tracking-[0.25em]" id="smQuestionTitle">
+                    Pertanyaan</p>
+                  <h3 class="text-3xl sm:text-4xl font-black text-slate-900 mt-2" id="smQuestionText">? + ?</h3>
+                </div>
+              </div>
+
+              <div class="space-y-2 mt-4">
+                <input id="smAnswerInput" type="number" inputmode="numeric" placeholder="Ketik jawaban..."
+                  class="w-full px-5 py-5 rounded-2xl border-2 border-transparent text-center bg-slate-50 text-3xl font-bold text-slate-900 shadow-inner focus:bg-white focus:border-amber-400 focus:ring-4 focus:ring-amber-200 outline-none">
+              </div>
+
+              <div class="flex items-center gap-3 mt-2">
+                <button id="smAnswerBtn"
+                  class="pill-btn w-full px-6 py-4 rounded-full bg-gradient-to-r from-orange-400 to-amber-500 text-white text-xl font-bold shadow-lg shadow-amber-900/25 border-b-4 border-amber-700 hover:scale-[1.01] transition focus:outline-none focus:ring-4 focus:ring-amber-200/80">Jawab</button>
+                <div id="smFeedback" class="text-sm font-semibold min-w-[120px] text-right"></div>
+              </div>
+            </div>
+            <div id="smConfetti" class="confetti">🎉</div>
+          </div>
+        </section>
       </main>
     </div>
   </div>
@@ -436,12 +557,15 @@
     const menuSection = document.getElementById('menuSection');
     const studySection = document.getElementById('studySection');
     const quizSection = document.getElementById('quizSection');
+    const speedMathSection = document.getElementById('speedMathSection');
     const appShell = document.getElementById('appShell');
     const appContent = document.getElementById('appContent');
     const startStudy = document.getElementById('startStudy');
     const startQuiz = document.getElementById('startQuiz');
+    const startSpeedMath = document.getElementById('startSpeedMath');
     const backFromStudy = document.getElementById('backFromStudy');
     const backFromQuiz = document.getElementById('backFromQuiz');
+    const backFromSpeedMath = document.getElementById('backFromSpeedMath');
 
     const fractionFront = document.getElementById('fractionFront');
     const decimalBack = document.getElementById('decimalBack');
@@ -471,6 +595,21 @@
     const applyQuizFilter = document.getElementById('applyQuizFilter');
     const quizDenomButtons = Array.from(document.querySelectorAll('.quiz-denom-btn'));
 
+    const speedMathTimer = document.getElementById('speedMathTimer');
+    const speedMathScoreEl = document.getElementById('speedMathScore');
+    const speedMathSettingsBtn = document.getElementById('speedMathSettingsBtn');
+    const speedMathSettingsPanel = document.getElementById('speedMathSettingsPanel');
+    const applySpeedMathSettings = document.getElementById('applySpeedMathSettings');
+    const smOpBtns = Array.from(document.querySelectorAll('.sm-op-btn'));
+    const smRangeBtns = Array.from(document.querySelectorAll('.sm-range-btn'));
+    const smTimeBtns = Array.from(document.querySelectorAll('.sm-time-btn'));
+    const smQuestionText = document.getElementById('smQuestionText');
+    const smAnswerInput = document.getElementById('smAnswerInput');
+    const smAnswerBtn = document.getElementById('smAnswerBtn');
+    const smFeedback = document.getElementById('smFeedback');
+    const speedMathCard = document.getElementById('speedMathCard');
+    const smConfetti = document.getElementById('smConfetti');
+
     const timerOptions = Array.from(document.querySelectorAll('.timer-option'));
     const studyHint = document.getElementById('studyHint');
 
@@ -491,10 +630,23 @@
     let timerInterval = null;
     let touchStartX = null;
 
+    let smOps = ['add', 'sub', 'mul', 'div'];
+    let smRange = 20;
+    let smTimeMin = 1; // 1 minute
+    let smDurationMs = 60 * 1000;
+    let smScore = 0;
+    let smCurrentAnswer = null;
+    let smState = 'waiting'; // waiting | review
+    let smStart = null;
+    let smEnd = null;
+    let smDelayTimer = null;
+    let smConfettiTimer = null;
+
     function showSection(section) {
       menuSection.classList.toggle('hidden', section !== 'menu');
       studySection.classList.toggle('hidden', section !== 'study');
       quizSection.classList.toggle('hidden', section !== 'quiz');
+      speedMathSection.classList.toggle('hidden', section !== 'speedMath');
       appShell.classList.toggle('menu-center', section === 'menu');
       appContent.classList.toggle('menu-stack', section === 'menu');
       if (section === 'study') {
@@ -502,6 +654,11 @@
         updateStudyFilterUI();
       }
       if (section === 'quiz') startTimer('quiz');
+      if (section === 'speedMath') {
+        startTimer('speedMath');
+        updateSpeedMathSettingsUI();
+        nextSpeedMathQuestion();
+      }
       if (section === 'menu') stopTimer();
       if (section === 'study') maybeShowStudyHint();
     }
@@ -556,6 +713,11 @@
         quizTimer.textContent = '00:00';
         quizEnd = quizDurationMs ? quizStart + quizDurationMs : null;
       }
+      if (mode === 'speedMath') {
+        smStart = Date.now();
+        speedMathTimer.textContent = '00:00';
+        smEnd = smDurationMs ? smStart + smDurationMs : null;
+      }
       timerInterval = setInterval(() => {
         if (studyStart) {
           if (studyEnd) {
@@ -575,6 +737,15 @@
             quizTimer.textContent = formatTime(Date.now() - quizStart);
           }
         }
+        if (smStart) {
+          if (smEnd) {
+            const remaining = Math.max(0, smEnd - Date.now());
+            speedMathTimer.textContent = formatTime(remaining);
+            if (remaining === 0) stopTimer();
+          } else {
+            speedMathTimer.textContent = formatTime(Date.now() - smStart);
+          }
+        }
       }, 1000);
     }
 
@@ -585,8 +756,10 @@
       }
       studyStart = null;
       quizStart = null;
+      smStart = null;
       studyEnd = null;
       quizEnd = null;
+      smEnd = null;
     }
 
     function isAcceptedAnswer(input, item) {
@@ -995,6 +1168,181 @@
       btn.addEventListener('click', () => {
         toggleQuizFilterValue(btn.dataset.quizDenom);
       });
+    });
+
+    // --- SPEED MATH (HITUNG CEPAT) LOGIC ---
+
+    startSpeedMath.addEventListener('click', () => {
+      smScore = 0;
+      speedMathScoreEl.textContent = smScore;
+      showSection('speedMath');
+    });
+
+    backFromSpeedMath.addEventListener('click', () => showSection('menu'));
+
+    speedMathSettingsBtn.addEventListener('click', () => {
+      speedMathSettingsPanel.classList.toggle('hidden');
+    });
+
+    function updateSpeedMathSettingsUI() {
+      // Operations
+      smOpBtns.forEach(btn => {
+        const val = btn.dataset.smOp;
+        const isActive = smOps.includes(val);
+        btn.className = 'sm-op-btn pill-btn px-4 py-2 rounded-full text-sm font-bold border-b-4 shadow-sm hover:scale-[1.01] transition-all';
+        if (isActive) btn.classList.add('bg-orange-600', 'text-white', 'border-orange-800');
+        else btn.classList.add('bg-white', 'text-slate-600', 'border-slate-200');
+      });
+
+      // Range
+      smRangeBtns.forEach(btn => {
+        const val = Number(btn.dataset.smRange);
+        btn.className = 'sm-range-btn pill-btn px-3 py-1.5 rounded-full text-xs font-bold border-b-4 shadow-sm hover:scale-[1.01] transition-all';
+        if (smRange === val) btn.classList.add('bg-orange-600', 'text-white', 'border-orange-800');
+        else btn.classList.add('bg-slate-100', 'text-slate-600', 'border-slate-200');
+      });
+
+      // Time
+      smTimeBtns.forEach(btn => {
+        const val = Number(btn.dataset.smTime);
+        btn.className = 'sm-time-btn pill-btn px-3 py-1.5 rounded-full text-xs font-bold border-b-4 shadow-sm hover:scale-[1.01] transition-all';
+        if (smTimeMin === val) btn.classList.add('bg-orange-600', 'text-white', 'border-orange-800');
+        else btn.classList.add('bg-slate-100', 'text-slate-600', 'border-slate-200');
+      });
+    }
+
+    smOpBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const val = btn.dataset.smOp;
+        if (smOps.includes(val)) {
+          if (smOps.length > 1) smOps = smOps.filter(op => op !== val);
+        } else {
+          smOps.push(val);
+        }
+        updateSpeedMathSettingsUI();
+      });
+    });
+
+    smRangeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        smRange = Number(btn.dataset.smRange);
+        updateSpeedMathSettingsUI();
+      });
+    });
+
+    smTimeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        smTimeMin = Number(btn.dataset.smTime);
+        updateSpeedMathSettingsUI();
+      });
+    });
+
+    applySpeedMathSettings.addEventListener('click', () => {
+      smDurationMs = smTimeMin > 0 ? smTimeMin * 60 * 1000 : null;
+      speedMathSettingsPanel.classList.add('hidden');
+      smScore = 0;
+      speedMathScoreEl.textContent = smScore;
+      startTimer('speedMath');
+      nextSpeedMathQuestion();
+    });
+
+    smAnswerInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        smAnswerBtn.click();
+      }
+    });
+
+    function randomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function nextSpeedMathQuestion() {
+      if (smDelayTimer) {
+        clearTimeout(smDelayTimer);
+        smDelayTimer = null;
+      }
+      if (smConfettiTimer) {
+        clearTimeout(smConfettiTimer);
+        smConfettiTimer = null;
+      }
+      speedMathCard.classList.remove('glow-correct', 'shake');
+      smConfetti.classList.remove('show');
+
+      const op = smOps[Math.floor(Math.random() * smOps.length)];
+      let a, b, symbol;
+
+      if (op === 'add') {
+        a = randomInt(1, smRange);
+        b = randomInt(1, smRange);
+        smCurrentAnswer = a + b;
+        symbol = '+';
+      } else if (op === 'sub') {
+        a = randomInt(1, smRange);
+        b = randomInt(1, a); // ensure no negative result
+        smCurrentAnswer = a - b;
+        symbol = '-';
+      } else if (op === 'mul') {
+        a = randomInt(1, Math.min(smRange, 20)); // Keep multiplication reasonable
+        b = randomInt(1, Math.min(smRange, 20));
+        smCurrentAnswer = a * b;
+        symbol = '×';
+      } else if (op === 'div') {
+        b = randomInt(1, Math.min(smRange, 20)); // Divisor
+        smCurrentAnswer = randomInt(1, Math.min(smRange, 20)); // Result
+        a = b * smCurrentAnswer; // Dividend
+        symbol = '÷';
+      }
+
+      smQuestionText.textContent = `${a} ${symbol} ${b} =`;
+      smFeedback.textContent = '';
+      smFeedback.className = 'text-sm font-semibold';
+      smAnswerInput.value = '';
+      smAnswerInput.focus();
+      smAnswerBtn.textContent = 'Jawab';
+      smState = 'waiting';
+    }
+
+    smAnswerBtn.addEventListener('click', () => {
+      if (smState === 'review') {
+        nextSpeedMathQuestion();
+        return;
+      }
+
+      const userAnswer = parseInt(smAnswerInput.value, 10);
+      if (isNaN(userAnswer)) {
+        smFeedback.textContent = 'Masukkan angka!';
+        smFeedback.className = 'text-sm font-semibold text-amber-600';
+        return;
+      }
+
+      if (userAnswer === smCurrentAnswer) {
+        smScore += 10;
+        speedMathScoreEl.textContent = smScore;
+        smFeedback.textContent = `Benar!`;
+        smFeedback.className = 'text-sm font-semibold text-green-600';
+        smAnswerBtn.textContent = 'Berikutnya...';
+        smState = 'review';
+        speedMathCard.classList.add('glow-correct');
+        smConfetti.classList.add('show');
+        smConfettiTimer = setTimeout(() => {
+          smConfetti.classList.remove('show');
+          smConfettiTimer = null;
+        }, 700);
+        smDelayTimer = setTimeout(() => {
+          smDelayTimer = null;
+          nextSpeedMathQuestion();
+        }, 1200);
+      } else {
+        smFeedback.textContent = `Salah. Jawaban: ${smCurrentAnswer}`;
+        smFeedback.className = 'text-sm font-semibold text-red-600';
+        smAnswerBtn.textContent = 'Lanjut';
+        smState = 'review';
+        speedMathCard.classList.remove('glow-correct');
+        smConfetti.classList.remove('show');
+        speedMathCard.classList.add('shake');
+        setTimeout(() => speedMathCard.classList.remove('shake'), 450);
+      }
     });
   </script>
 </body>
