@@ -955,21 +955,19 @@
     });
 
     function setStudyFilter(value) {
-      studyFilter = value;
+      if (value === 'all') {
+        studyFilter = ['all'];
+      } else {
+        studyFilter = [value];
+      }
       studyIndex = 0;
-      denomButtons.forEach(btn => {
-        const active = btn.dataset.denom === String(value);
-        btn.classList.toggle('bg-indigo-500', active);
-        btn.classList.toggle('text-white', active);
-        btn.classList.toggle('border-indigo-700', active);
-        btn.classList.toggle('shadow-indigo-900/30', active);
-      });
+      updateStudyFilterUI();
       renderCard();
     }
 
     denomButtons.forEach(btn => {
       btn.addEventListener('click', () => {
-        setStudyFilter(btn.dataset.denom);
+        toggleStudyFilterValue(btn.dataset.denom);
       });
     });
 
@@ -1078,57 +1076,6 @@
 
     function updateStudyFilterUI() {
       denomButtons.forEach(btn => {
-        const val = btn.dataset.denom;
-        const isActive = studyFilter.includes(val);
-
-        // Reset
-        btn.className = 'denom-btn pill-btn px-4 py-2 rounded-full text-xs font-bold border-b-4 shadow-sm hover:scale-[1.01] transition-all';
-
-        if (isActive) {
-          btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-800', 'shadow-indigo-900/40');
-        } else {
-          btn.classList.add('bg-white', 'text-slate-600', 'border-slate-200');
-        }
-      });
-    }
-
-    function setStudyFilter(value) {
-      // Legacy wrapper or if we need direct set
-      toggleStudyFilterValue(value);
-    }
-
-    // Override existing listener logic
-    denomButtons.forEach(btn => {
-      // remove old listener if possible (not easily in vanilla JS without tracking functions), 
-      // but we can just make sure we don't duplicate logic if we replace the element or just update what the listener does.
-      // Since we are replacing the HTML of buttons, the old listeners are gone!
-      // We need to re-add listeners to the NEW buttons.
-    });
-
-    // Because we replaced the HTML in step 2 (chunk 1), the old buttons are gone. 
-    // We need to re-select them.
-    // wait, `denomButtons` variable holds reference to OLD buttons if defined by `const`.
-    // We need to re-query the buttons.
-    const newDenomButtons = Array.from(document.querySelectorAll('.denom-btn'));
-    newDenomButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        toggleStudyFilterValue(btn.dataset.denom);
-      });
-    });
-
-    // Re-assign to global var if we want to use it elsewhere, but checking usage:
-    // It's used in updateStudyFilterUI, so we should update the global variable or pass it.
-    // Since `denomButtons` is const, we cannot reassign it. We should use `newDenomButtons` inside `updateStudyFilterUI` or change `const` to `let`.
-    // But `denomButtons` was defined way up. 
-    // Best approach: In `updateStudyFilterUI`, re-query or use `document.querySelectorAll`.
-    // Actually, I can't change `const` to `let` easily without finding the definition line.
-    // I see line 431: const denomButtons = ...
-    // I can't change that easily without a massive replace.
-    // I'll make updateStudyFilterUI query the selector directly.
-
-    function updateStudyFilterUI() {
-      const currentButtons = document.querySelectorAll('.denom-btn');
-      currentButtons.forEach(btn => {
         const val = btn.dataset.denom;
         const isActive = studyFilter.includes(val);
 
