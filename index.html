@@ -300,6 +300,20 @@
               <button id="nextCard"
                 class="pill-btn w-full px-5 py-3 rounded-full bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-semibold shadow-lg shadow-indigo-900/30 border-b-4 border-indigo-700 hover:scale-[1.01] transition focus:outline-none focus:ring-4 focus:ring-indigo-300/70">Selanjutnya</button>
             </div>
+
+            <button id="showTableBtn"
+              class="mt-4 w-full pill-btn px-5 py-3 rounded-full border border-purple-100/80 text-purple-800 font-semibold bg-purple-50 shadow-md shadow-purple-900/20 border-b-4 border-b-purple-200 hover:bg-purple-100 transition flex justify-center items-center gap-2 focus:outline-none focus:ring-4 focus:ring-purple-200/70">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M3 3h18v18H3z"></path>
+                <path d="M3 9h18"></path>
+                <path d="M3 15h18"></path>
+                <path d="M9 3v18"></path>
+                <path d="M15 3v18"></path>
+              </svg>
+              Lihat Tabel Semua Pecahan
+            </button>
+
             <p class="mt-3 text-center text-xs text-slate-600">Sentuh kartu untuk flip desimal & persen</p>
           </div>
         </section>
@@ -537,6 +551,39 @@
     </div>
   </div>
 
+  <!-- Modal Tabel Pecahan -->
+  <div id="fractionTableModal"
+    class="fixed inset-0 z-50 hidden bg-[#1a1f4d]/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div
+      class="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh] scale-95 opacity-0 transition-all duration-300"
+      id="fractionTableContent">
+      <div
+        class="px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 flex justify-between items-center text-white">
+        <h3 class="text-lg font-bold">Tabel Pecahan Istimewa</h3>
+        <button id="closeTableBtn"
+          class="text-white hover:text-indigo-200 focus:outline-none p-1 bg-white/10 rounded-full transition">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="p-0 overflow-y-auto bg-slate-50">
+        <table class="w-full text-left border-collapse">
+          <thead class="sticky top-0 bg-indigo-50/95 backdrop-blur-sm shadow-sm z-10">
+            <tr class="text-indigo-800 text-sm border-b border-indigo-100">
+              <th class="py-3 px-6 font-bold">Pecahan</th>
+              <th class="py-3 px-6 font-bold border-l border-indigo-100">Desimal</th>
+              <th class="py-3 px-6 font-bold border-l border-indigo-100">Persen</th>
+            </tr>
+          </thead>
+          <tbody id="fractionTableBody" class="text-slate-700 text-sm font-semibold divide-y divide-slate-200">
+            <!-- Table content populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <script>
     const data = [
       { fraction: '1/2', decimalValue: 0.5, decimalDisplay: '0.5', percentDisplay: '50%', accepted: ['0.5', '0,5'] },
@@ -579,6 +626,12 @@
     const backFromStudy = document.getElementById('backFromStudy');
     const backFromQuiz = document.getElementById('backFromQuiz');
     const backFromSpeedMath = document.getElementById('backFromSpeedMath');
+
+    const showTableBtn = document.getElementById('showTableBtn');
+    const fractionTableModal = document.getElementById('fractionTableModal');
+    const closeTableBtn = document.getElementById('closeTableBtn');
+    const fractionTableBody = document.getElementById('fractionTableBody');
+    const fractionTableContent = document.getElementById('fractionTableContent');
 
     const fractionFront = document.getElementById('fractionFront');
     const decimalBack = document.getElementById('decimalBack');
@@ -1294,6 +1347,41 @@
       smAnswerBtn.textContent = 'Jawab';
       smState = 'waiting';
     }
+
+    showTableBtn.addEventListener('click', () => {
+      fractionTableModal.classList.remove('hidden');
+      // trigger reflow
+      void fractionTableModal.offsetWidth;
+      fractionTableContent.classList.remove('scale-95', 'opacity-0');
+      fractionTableContent.classList.add('scale-100', 'opacity-100');
+
+      // Populate table if not already populated
+      if (fractionTableBody.children.length === 0) {
+        const rows = data.map((item, index) => {
+          const bgClass = index % 2 === 0 ? 'bg-white' : 'bg-slate-50';
+          return `<tr class="${bgClass} hover:bg-indigo-50/50 transition-colors">
+            <td class="py-4 px-6"><span class="px-3 py-1.5 bg-indigo-100 text-indigo-800 rounded-lg font-bold shadow-sm">${item.fraction}</span></td>
+            <td class="py-4 px-6 border-l border-slate-100 text-slate-700 font-bold">${item.decimalDisplay}</td>
+            <td class="py-4 px-6 border-l border-slate-100 text-indigo-700 font-bold">${item.percentDisplay}</td>
+          </tr>`;
+        });
+        fractionTableBody.innerHTML = rows.join('');
+      }
+    });
+
+    closeTableBtn.addEventListener('click', () => {
+      fractionTableContent.classList.remove('scale-100', 'opacity-100');
+      fractionTableContent.classList.add('scale-95', 'opacity-0');
+      setTimeout(() => {
+        fractionTableModal.classList.add('hidden');
+      }, 300);
+    });
+
+    fractionTableModal.addEventListener('click', (e) => {
+      if (e.target === fractionTableModal) {
+        closeTableBtn.click();
+      }
+    });
 
     smAnswerBtn.addEventListener('click', () => {
       if (smState === 'review') {
