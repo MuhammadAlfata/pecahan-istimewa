@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pecahan Pintar</title>
+  <title>Math Master</title>
+  <link rel="icon" type="image/png" href="favicon.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -494,6 +495,17 @@
                 </div>
               </div>
               <div>
+                <p class="text-xs font-bold text-slate-700 mb-2">Tipe Bilangan</p>
+                <div class="flex flex-wrap gap-2">
+                  <button data-sm-negative="false"
+                    class="sm-negative-btn pill-btn px-3 py-1.5 rounded-full text-xs font-bold bg-amber-500 text-white border-b-4 border-amber-700 shadow-sm hover:scale-[1.01] transition-all">Positif
+                    Saja</button>
+                  <button data-sm-negative="true"
+                    class="sm-negative-btn pill-btn px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border-b-4 border-slate-200 shadow-sm hover:scale-[1.01] transition-all">Positif
+                    & Negatif</button>
+                </div>
+              </div>
+              <div>
                 <p class="text-xs font-bold text-slate-700 mb-2">Durasi Waktu</p>
                 <div class="flex flex-wrap gap-2">
                   <button data-sm-time="1"
@@ -534,7 +546,7 @@
               </div>
 
               <div class="space-y-2 mt-4">
-                <input id="smAnswerInput" type="number" inputmode="numeric" placeholder="Ketik jawaban..."
+                <input id="smAnswerInput" type="number" placeholder="Ketik jawaban..."
                   class="w-full px-5 py-5 rounded-2xl border-2 border-transparent text-center bg-slate-50 text-3xl font-bold text-slate-900 shadow-inner focus:bg-white focus:border-amber-400 focus:ring-4 focus:ring-amber-200 outline-none">
               </div>
 
@@ -669,6 +681,7 @@
     const smOpBtns = Array.from(document.querySelectorAll('.sm-op-btn'));
     const smRangeBtns = Array.from(document.querySelectorAll('.sm-range-btn'));
     const smTimeBtns = Array.from(document.querySelectorAll('.sm-time-btn'));
+    const smNegativeBtns = Array.from(document.querySelectorAll('.sm-negative-btn'));
     const smQuestionText = document.getElementById('smQuestionText');
     const smAnswerInput = document.getElementById('smAnswerInput');
     const smAnswerBtn = document.getElementById('smAnswerBtn');
@@ -701,6 +714,7 @@
     let smRange = 20;
     let smTimeMin = 1; // 1 minute
     let smDurationMs = 60 * 1000;
+    let smAllowNegative = false;
     let smScore = 0;
     let smTargetScoreVal = 0;
     let smCurrentAnswer = null;
@@ -1247,6 +1261,14 @@
         else btn.classList.add('bg-slate-100', 'text-slate-600', 'border-slate-200');
       });
 
+      // Negative
+      smNegativeBtns.forEach(btn => {
+        const allowNeg = btn.dataset.smNegative === 'true';
+        btn.className = 'sm-negative-btn pill-btn px-3 py-1.5 rounded-full text-xs font-bold border-b-4 shadow-sm hover:scale-[1.01] transition-all';
+        if (smAllowNegative === allowNeg) btn.classList.add('bg-orange-600', 'text-white', 'border-orange-800');
+        else btn.classList.add('bg-slate-100', 'text-slate-600', 'border-slate-200');
+      });
+
       // Time
       smTimeBtns.forEach(btn => {
         const val = Number(btn.dataset.smTime);
@@ -1282,6 +1304,13 @@
       });
     });
 
+    smNegativeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        smAllowNegative = btn.dataset.smNegative === 'true';
+        updateSpeedMathSettingsUI();
+      });
+    });
+
     applySpeedMathSettings.addEventListener('click', () => {
       const input = document.getElementById('smTargetScore');
       smTargetScoreVal = input && input.value ? parseInt(input.value, 10) : 0;
@@ -1304,6 +1333,14 @@
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
+    function randomSmNumber(max, allowNegative) {
+      let num = randomInt(1, max);
+      if (allowNegative && Math.random() > 0.5) {
+        num = -num;
+      }
+      return num;
+    }
+
     function nextSpeedMathQuestion() {
       if (smDelayTimer) {
         clearTimeout(smDelayTimer);
@@ -1320,28 +1357,33 @@
       let a, b, symbol;
 
       if (op === 'add') {
-        a = randomInt(1, smRange);
-        b = randomInt(1, smRange);
+        a = randomSmNumber(smRange, smAllowNegative);
+        b = randomSmNumber(smRange, smAllowNegative);
         smCurrentAnswer = a + b;
         symbol = '+';
       } else if (op === 'sub') {
-        a = randomInt(1, smRange);
-        b = randomInt(1, a); // ensure no negative result
+        a = randomSmNumber(smRange, smAllowNegative);
+        if (smAllowNegative) {
+          b = randomSmNumber(smRange, smAllowNegative);
+        } else {
+          b = randomInt(1, a); // ensure no negative result
+        }
         smCurrentAnswer = a - b;
         symbol = '-';
       } else if (op === 'mul') {
-        a = randomInt(1, Math.min(smRange, 20)); // Keep multiplication reasonable
-        b = randomInt(1, Math.min(smRange, 20));
+        a = randomSmNumber(Math.min(smRange, 20), smAllowNegative);
+        b = randomSmNumber(Math.min(smRange, 20), smAllowNegative);
         smCurrentAnswer = a * b;
         symbol = '×';
       } else if (op === 'div') {
-        b = randomInt(1, Math.min(smRange, 20)); // Divisor
-        smCurrentAnswer = randomInt(1, Math.min(smRange, 20)); // Result
+        b = randomSmNumber(Math.min(smRange, 20), smAllowNegative); // Divisor
+        smCurrentAnswer = randomSmNumber(Math.min(smRange, 20), smAllowNegative); // Result
         a = b * smCurrentAnswer; // Dividend
         symbol = '÷';
       }
 
-      smQuestionText.textContent = `${a} ${symbol} ${b} =`;
+      const formatNum = (n, isFirst) => (n < 0 && !isFirst) ? `(${n})` : n;
+      smQuestionText.textContent = `${formatNum(a, true)} ${symbol} ${formatNum(b, false)} =`;
       smFeedback.textContent = '';
       smFeedback.className = 'text-sm font-semibold';
       smAnswerInput.value = '';
