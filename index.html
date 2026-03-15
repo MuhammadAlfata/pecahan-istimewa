@@ -1010,7 +1010,9 @@
           nextQuizQuestion();
         }, 1500);
       } else {
-        feedback.textContent = `Belum tepat. Jawaban: ${quizFraction.decimalDisplay} (${quizFraction.percentDisplay})`;
+        score -= 5;
+        scoreEl.textContent = score;
+        feedback.textContent = `Belum tepat (-5 poin). Jawaban: ${quizFraction.decimalDisplay} (${quizFraction.percentDisplay})`;
         feedback.className = 'text-sm font-semibold text-red-600';
         answerBtn.textContent = 'Lanjut';
         quizState = 'review';
@@ -1326,7 +1328,9 @@
           nextSpeedMathQuestion();
         }, 1200);
       } else {
-        smFeedback.textContent = `Salah. Jawaban: ${smCurrentAnswer}`;
+        smScore -= 5;
+        speedMathScoreEl.textContent = smScore;
+        smFeedback.textContent = `Salah (-5 poin). Jawaban: ${smCurrentAnswer}`;
         smFeedback.className = 'text-sm font-semibold text-red-600';
         smAnswerBtn.textContent = 'Lanjut';
         smState = 'review';
