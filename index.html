@@ -370,6 +370,16 @@
             </div>
             <div id="quizFilterPanel"
               class="hidden relative z-10 mb-5 bg-white/50 p-4 rounded-2xl border border-white/40 backdrop-blur-sm">
+              <div class="mb-4">
+                <p class="text-xs font-bold text-slate-600 mb-2">Tipe Soal</p>
+                <div class="flex flex-wrap gap-2">
+                  <button data-quiz-type="random" class="quiz-type-btn pill-btn px-4 py-2 rounded-full text-xs font-bold bg-indigo-600 text-white border-b-4 border-indigo-800 shadow-sm hover:scale-[1.01] transition-all">Acak Semua</button>
+                  <button data-quiz-type="fractionToDecimal" class="quiz-type-btn pill-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-slate-600 border-b-4 border-slate-200 shadow-sm hover:scale-[1.01] transition-all">Pecahan ke Desimal</button>
+                  <button data-quiz-type="fractionToPercent" class="quiz-type-btn pill-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-slate-600 border-b-4 border-slate-200 shadow-sm hover:scale-[1.01] transition-all">Pecahan ke Persen</button>
+                  <button data-quiz-type="decimalToFraction" class="quiz-type-btn pill-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-slate-600 border-b-4 border-slate-200 shadow-sm hover:scale-[1.01] transition-all">Desimal ke Pecahan</button>
+                  <button data-quiz-type="percentToFraction" class="quiz-type-btn pill-btn px-4 py-2 rounded-full text-xs font-bold bg-white text-slate-600 border-b-4 border-slate-200 shadow-sm hover:scale-[1.01] transition-all">Persen ke Pecahan</button>
+                </div>
+              </div>
               <div class="flex items-center justify-between mb-3">
                 <p class="text-xs font-bold text-slate-600">Pilih soal pecahan</p>
                 <span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">Bisa pilih
@@ -672,6 +682,7 @@
     const quizFilterBtn = document.getElementById('quizFilterBtn');
     const applyQuizFilter = document.getElementById('applyQuizFilter');
     const quizDenomButtons = Array.from(document.querySelectorAll('.quiz-denom-btn'));
+    const quizTypeButtons = Array.from(document.querySelectorAll('.quiz-type-btn'));
 
     const speedMathTimer = document.getElementById('speedMathTimer');
     const speedMathScoreEl = document.getElementById('speedMathScore');
@@ -695,6 +706,8 @@
     let studyIndex = 0;
     let studyFilter = ['all'];
     let quizFilter = ['all']; // array of strings
+    let quizTypeSelection = 'random';
+    let currentQuizMode = 'fractionToDecimal';
     let quizFraction = null;
     let score = 0;
     let quizTargetScoreVal = 0;
@@ -868,15 +881,30 @@
       smEnd = null;
     }
 
-    function isAcceptedAnswer(input, item) {
+    function isAcceptedAnswer(input, item, mode) {
       const normalized = normalizeInput(input);
       if (!normalized) return false;
-      const acceptedMatch = item.accepted.some(acc => normalized === normalizeInput(acc));
-      if (acceptedMatch) return true;
 
-      const numeric = Number(normalized);
-      if (!Number.isNaN(numeric)) {
-        return Math.abs(numeric - item.decimalValue) < 0.002;
+      if (mode === 'fractionToDecimal') {
+        const acceptedMatch = item.accepted.some(acc => normalized === normalizeInput(acc));
+        if (acceptedMatch) return true;
+
+        const numeric = Number(normalized);
+        if (!Number.isNaN(numeric)) {
+          return Math.abs(numeric - item.decimalValue) < 0.002;
+        }
+        return false;
+      } else if (mode === 'fractionToPercent') {
+        const inputNum = input.trim().replace('%', '').replace(',', '.');
+        const num = Number(inputNum);
+        if (!Number.isNaN(num)) {
+            const expected = item.decimalValue * 100;
+            return Math.abs(num - expected) < 0.2;
+        }
+        return false;
+      } else if (mode === 'decimalToFraction' || mode === 'percentToFraction') {
+        const cleanedInput = input.trim().replace(/\s/g, '');
+        return cleanedInput === item.fraction;
       }
       return false;
     }
@@ -894,7 +922,33 @@
       confetti.classList.remove('show');
       const candidates = filteredQuizData();
       quizFraction = candidates[Math.floor(Math.random() * candidates.length)];
-      currentFraction.textContent = quizFraction.fraction;
+      
+      const modes = ['fractionToDecimal', 'fractionToPercent', 'decimalToFraction', 'percentToFraction'];
+      if (quizTypeSelection === 'random') {
+          currentQuizMode = modes[Math.floor(Math.random() * modes.length)];
+      } else {
+          currentQuizMode = quizTypeSelection;
+      }
+      
+      const promptEl = document.getElementById('quizPrompt');
+      if (currentQuizMode === 'fractionToDecimal') {
+          promptEl.textContent = 'Ubah pecahan ini ke desimal';
+          currentFraction.textContent = quizFraction.fraction;
+          answerInput.placeholder = "contoh: 0.5 atau 0,5";
+      } else if (currentQuizMode === 'fractionToPercent') {
+          promptEl.textContent = 'Ubah pecahan ini ke persen (%)';
+          currentFraction.textContent = quizFraction.fraction;
+          answerInput.placeholder = "contoh: 50 atau 50%";
+      } else if (currentQuizMode === 'decimalToFraction') {
+          promptEl.textContent = 'Ubah desimal ini ke pecahan';
+          currentFraction.textContent = quizFraction.decimalDisplay;
+          answerInput.placeholder = "contoh: 1/2";
+      } else if (currentQuizMode === 'percentToFraction') {
+          promptEl.textContent = 'Ubah persen ini ke pecahan';
+          currentFraction.textContent = quizFraction.percentDisplay;
+          answerInput.placeholder = "contoh: 1/2";
+      }
+
       feedback.textContent = '';
       feedback.className = 'text-sm font-semibold';
       answerInput.value = '';
@@ -1059,7 +1113,7 @@
         return;
       }
 
-      if (isAcceptedAnswer(userAnswer, quizFraction)) {
+      if (isAcceptedAnswer(userAnswer, quizFraction, currentQuizMode)) {
         score += 10;
         scoreEl.textContent = score;
         feedback.textContent = `Benar! ${quizFraction.fraction} = ${quizFraction.decimalDisplay} (${quizFraction.percentDisplay})`;
@@ -1079,7 +1133,11 @@
       } else {
         score -= 5;
         scoreEl.textContent = score;
-        feedback.textContent = `Belum tepat (-5 poin). Jawaban: ${quizFraction.decimalDisplay} (${quizFraction.percentDisplay})`;
+        let corrAns = '';
+        if (currentQuizMode === 'fractionToDecimal') corrAns = quizFraction.decimalDisplay;
+        else if (currentQuizMode === 'fractionToPercent') corrAns = quizFraction.percentDisplay;
+        else corrAns = quizFraction.fraction;
+        feedback.textContent = `Belum tepat (-5 poin). Jawaban: ${corrAns}`;
         feedback.className = 'text-sm font-semibold text-red-600';
         answerBtn.textContent = 'Lanjut';
         quizState = 'review';
@@ -1221,11 +1279,31 @@
           btn.classList.add('bg-white', 'text-slate-600', 'border-slate-200');
         }
       });
+      
+      quizTypeButtons.forEach(btn => {
+        const val = btn.dataset.quizType;
+        const isActive = quizTypeSelection === val;
+
+        btn.className = 'quiz-type-btn pill-btn px-4 py-2 rounded-full text-xs font-bold border-b-4 shadow-sm hover:scale-[1.01] transition-all';
+
+        if (isActive) {
+          btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-800', 'shadow-indigo-900/40');
+        } else {
+          btn.classList.add('bg-white', 'text-slate-600', 'border-slate-200');
+        }
+      });
     }
 
     quizDenomButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         toggleQuizFilterValue(btn.dataset.quizDenom);
+      });
+    });
+
+    quizTypeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        quizTypeSelection = btn.dataset.quizType;
+        updateQuizFilterUI();
       });
     });
 
