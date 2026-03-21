@@ -197,8 +197,18 @@
               </svg>
               Hitung Cepat
             </button>
+            <button id="startDivisibility"
+              class="pill-btn w-full px-6 py-4 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 text-white text-lg font-bold shadow-lg shadow-rose-900/30 border-b-4 border-rose-700 flex items-center justify-center gap-3 focus:outline-none focus:ring-4 focus:ring-rose-300/70">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M4 19.5v-15a2.5 2.5 0 0 1 2.5-2.5H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
+              Aturan Pembagian
+            </button>
           </div>
         </section>
+
+
 
         <!-- Study Mode -->
         <section id="studySection" class="hidden">
@@ -569,6 +579,172 @@
             <div id="smConfetti" class="confetti">🎉</div>
           </div>
         </section>
+
+        <!-- Divisibility Section -->
+        <section id="divisibilitySection" class="hidden">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <p class="text-[11px] font-semibold text-rose-100 uppercase tracking-[0.25em]">Materi & Latihan</p>
+              <h2 class="text-2xl font-bold text-white">Aturan Pembagian</h2>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="px-3 py-2 rounded-full bg-white/20 border border-white/30 text-white text-xs font-semibold hover:bg-white/30 transition shadow-sm hidden" id="divTimer" type="button">00:00</button>
+              <button class="px-3 py-2 rounded-full bg-white/20 border border-white/30 text-white text-xs font-semibold hover:bg-white/30 transition shadow-sm items-center gap-1 hidden" id="divSettingsBtn" type="button">
+                <svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                Atur
+              </button>
+              <button class="text-sm font-semibold text-rose-100 hover:text-white transition" id="backFromDivisibility">Menu</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 mb-4">
+            <button id="tabMateri" class="pill-btn py-3 rounded-2xl bg-white text-rose-700 font-bold border-b-4 border-rose-200 shadow-md">📚 Materi</button>
+            <button id="tabLatihan" class="pill-btn py-3 rounded-2xl bg-rose-500/80 text-white font-bold border-b-4 border-rose-700 shadow-md">🎯 Latihan</button>
+          </div>
+
+          <!-- Materi Panel -->
+          <div id="divMateriPanel" class="bg-white/95 backdrop-blur-xl rounded-3xl border border-white/40 shadow-2xl p-6 sm:p-7 space-y-4 max-h-[60vh] overflow-y-auto w-full">
+            <div class="p-4 bg-slate-50 border border-slate-100 rounded-2xl">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center font-black text-lg">2</div>
+                <h3 class="font-bold text-slate-800 text-lg">Bilangan Genap</h3>
+              </div>
+              <p class="text-sm text-slate-600 mb-2 font-medium">Digit terakhir 0, 2, 4, 6, 8</p>
+            </div>
+
+            <div class="p-4 bg-slate-50 border border-slate-100 rounded-2xl">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center font-black text-lg">3</div>
+                <h3 class="font-bold text-slate-800 text-lg">Jumlah Digit Kelipatan 3</h3>
+              </div>
+              <p class="text-sm text-slate-600 mb-2 font-medium">Jumlahkan semua digit. Jika hasilnya kelipatan 3, maka habis dibagi 3.</p>
+              <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs text-slate-700 space-y-1">
+                 <div><span class="font-bold text-green-600">861</span> &rarr; 8 + 6 + 1 = 15 (habis dibagi 3)</div>
+                 <div><span class="font-bold text-green-600">72</span> &rarr; 7 + 2 = 9 (habis dibagi 3)</div>
+                 <div><span class="font-bold text-red-500">56</span> &rarr; 5 + 6 = 11 (tidak habis dibagi 3)</div>
+              </div>
+            </div>
+
+            <div class="p-4 bg-slate-50 border border-slate-100 rounded-2xl">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center font-black text-lg">4</div>
+                <h3 class="font-bold text-slate-800 text-lg">Dua Digit Terakhir</h3>
+              </div>
+              <p class="text-sm text-slate-600 mb-2 font-medium">Jika dua digit terakhir habis dibagi 4, maka seluruh bilangan habis dibagi 4.</p>
+              <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs text-slate-700 space-y-1">
+                 <div><span class="font-bold text-green-600">3456</span> &rarr; 56 habis dibagi 4 &rarr; habis dibagi 4</div>
+                 <div><span class="font-bold text-red-500">729</span> &rarr; 29 tidak habis dibagi 4 &rarr; tidak habis dibagi 4</div>
+              </div>
+            </div>
+
+            <div class="p-4 bg-slate-50 border border-slate-100 rounded-2xl">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center font-black text-lg">5</div>
+                <h3 class="font-bold text-slate-800 text-lg">Berakhir 0 atau 5</h3>
+              </div>
+              <p class="text-sm text-slate-600 font-medium">Digit terakhir harus 0 atau 5.</p>
+              <div class="mt-2 bg-white p-3 rounded-xl border border-slate-200 text-xs text-slate-700 space-y-1">
+                 <div><span class="font-bold text-green-600">12345</span> &rarr; berakhir dengan 5 &rarr; habis dibagi 5</div>
+              </div>
+            </div>
+
+            <div class="p-4 bg-slate-50 border border-slate-100 rounded-2xl">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center font-black text-lg">6</div>
+                <h3 class="font-bold text-slate-800 text-lg">Syarat Dibagi 2 dan 3</h3>
+              </div>
+              <p class="text-sm text-slate-600 mb-2 font-medium">Harus memenuhi dua syarat: Habis dibagi 2 (bilangan genap) dan jumlah digitnya kelipatan 3.</p>
+              <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs text-slate-700 space-y-1">
+                 <div><span class="font-bold text-red-500">2937</span> &rarr; tidak genap &rarr; tidak habis dibagi 6</div>
+                 <div><span class="font-bold text-red-500">2828</span> &rarr; genap, jumlah digit 20 &rarr; bukan kelipatan 3 &rarr; tidak habis dibagi 6</div>
+                 <div><span class="font-bold text-green-600">2238</span> &rarr; genap, jumlah digit 15 &rarr; kelipatan 3 &rarr; habis dibagi 6</div>
+              </div>
+            </div>
+
+            <div class="p-4 bg-slate-50 border border-slate-100 rounded-2xl">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center font-black text-lg">7</div>
+                <h3 class="font-bold text-slate-800 text-lg">Aturan Angka 7</h3>
+              </div>
+              <p class="text-sm text-slate-600 mb-2 font-medium">Ambil digit terakhir, kalikan 2. Kurangkan hasilnya dari sisa bilangan. Jika hasilnya kelipatan 7, maka bilangan tersebut habis dibagi 7.</p>
+              <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs text-slate-700 space-y-1">
+                 <div><span class="font-bold text-red-500">527</span> &rarr; 7×2=14 &rarr; 52−14=38 &rarr; bukan kelipatan 7 &rarr; tidak habis dibagi 7</div>
+                 <div><span class="font-bold text-green-600">581</span> &rarr; 1×2=2 &rarr; 58−2=56 &rarr; kelipatan 7 &rarr; habis dibagi 7</div>
+                 <div><span class="font-bold text-red-500">880</span> &rarr; 0×2=0 &rarr; 88−0=88 &rarr; 8×2=16 &rarr; 8−16=−8 &rarr; bukan kelipatan 7 &rarr; tidak habis dibagi 7</div>
+              </div>
+            </div>
+
+            <div class="p-4 bg-slate-50 border border-slate-100 rounded-2xl">
+              <div class="flex items-center gap-3 mb-2">
+                <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center font-black text-lg">8</div>
+                <h3 class="font-bold text-slate-800 text-lg">Tiga Digit Terakhir</h3>
+              </div>
+              <p class="text-sm text-slate-600 mb-2 font-medium">Jika tiga digit terakhir habis dibagi 8, maka seluruh bilangan habis dibagi 8.</p>
+              <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs text-slate-700 space-y-1">
+                 <div><span class="font-bold text-green-600">23120</span> &rarr; 120 habis dibagi 8 &rarr; habis dibagi 8</div>
+                 <div><span class="font-bold text-red-500">23724</span> &rarr; 724 tidak habis dibagi 8 &rarr; tidak habis dibagi 8</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Latihan Panel -->
+          <div id="divLatihanPanel" class="hidden relative bg-white/95 backdrop-blur-xl rounded-3xl border border-white/40 shadow-2xl p-6 sm:p-7 space-y-6">
+            
+            <div id="divSettingsPanel" class="hidden relative z-10 bg-white/50 p-5 rounded-2xl border border-white/40 backdrop-blur-sm shadow-lg mb-5 space-y-4">
+              <div>
+                <p class="text-xs font-bold text-slate-700 mb-2">Pilih Angka Pembagi (Minimal 1)</p>
+                <div class="flex flex-wrap gap-2">
+                  <button data-div-num="2" class="div-num-btn pill-btn px-4 py-2 rounded-full text-sm font-bold bg-rose-500 text-white border-b-4 border-rose-700 shadow-sm hover:scale-[1.01] transition-all">2</button>
+                  <button data-div-num="3" class="div-num-btn pill-btn px-4 py-2 rounded-full text-sm font-bold bg-rose-500 text-white border-b-4 border-rose-700 shadow-sm transition-all hover:scale-[1.01]">3</button>
+                  <button data-div-num="4" class="div-num-btn pill-btn px-4 py-2 rounded-full text-sm font-bold bg-rose-500 text-white border-b-4 border-rose-700 shadow-sm transition-all hover:scale-[1.01]">4</button>
+                  <button data-div-num="5" class="div-num-btn pill-btn px-4 py-2 rounded-full text-sm font-bold bg-rose-500 text-white border-b-4 border-rose-700 shadow-sm transition-all hover:scale-[1.01]">5</button>
+                  <button data-div-num="6" class="div-num-btn pill-btn px-4 py-2 rounded-full text-sm font-bold bg-rose-500 text-white border-b-4 border-rose-700 shadow-sm transition-all hover:scale-[1.01]">6</button>
+                  <button data-div-num="7" class="div-num-btn pill-btn px-4 py-2 rounded-full text-sm font-bold bg-rose-500 text-white border-b-4 border-rose-700 shadow-sm transition-all hover:scale-[1.01]">7</button>
+                  <button data-div-num="8" class="div-num-btn pill-btn px-4 py-2 rounded-full text-sm font-bold bg-rose-500 text-white border-b-4 border-rose-700 shadow-sm transition-all hover:scale-[1.01]">8</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-slate-700 mb-2">Durasi Waktu</p>
+                <div class="flex flex-wrap gap-2">
+                  <button data-div-time="1" class="div-time-btn pill-btn px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border-b-4 border-slate-200 shadow-sm transition-all hover:scale-[1.01]">1 Menit</button>
+                  <button data-div-time="3" class="div-time-btn pill-btn px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border-b-4 border-slate-200 shadow-sm transition-all hover:scale-[1.01]">3 Menit</button>
+                  <button data-div-time="5" class="div-time-btn pill-btn px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border-b-4 border-slate-200 shadow-sm transition-all hover:scale-[1.01]">5 Menit</button>
+                  <button data-div-time="0" class="div-time-btn pill-btn px-3 py-1.5 rounded-full text-xs font-bold bg-rose-500 text-white border-b-4 border-rose-700 shadow-sm transition-all hover:scale-[1.01]">Tanpa Batas</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-slate-700 mb-2">Target Skor (Opsional)</p>
+                <input id="divTargetScore" type="number" min="0" placeholder="Contoh: 100" class="w-full px-4 py-2 rounded-xl border border-slate-300 bg-white text-slate-900 placeholder-slate-400 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-rose-400">
+              </div>
+              <button id="applyDivSettings" class="w-full mt-3 py-3 rounded-xl bg-rose-600 text-white text-sm font-bold shadow-lg shadow-rose-500/30 active:scale-[0.98] transition-transform">Simpan & Mulai</button>
+            </div>
+
+            <div id="divPlayArea" class="relative flex flex-col gap-4">
+               <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-slate-500 px-3 py-1 bg-slate-100 rounded-full">Skor: <span id="divScore">0</span></span>
+               </div>
+               <div class="text-center py-4 relative z-10">
+               <p class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2" id="divQuestionTitle">Pertanyaan</p>
+               <h3 class="text-2xl sm:text-3xl font-black text-slate-800" id="divQuestionText">Apakah 861 habis dibagi 3?</h3>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 relative z-10">
+               <button id="divBtnYes" class="pill-btn py-4 rounded-xl bg-gradient-to-r from-emerald-400 to-green-500 text-white font-bold text-lg border-b-4 border-green-700 shadow-md">Ya, Habis</button>
+               <button id="divBtnNo" class="pill-btn py-4 rounded-xl bg-gradient-to-r from-red-400 to-rose-500 text-white font-bold text-lg border-b-4 border-rose-700 shadow-md">Tidak</button>
+            </div>
+            
+            <div id="divFeedbackBox" class="hidden p-5 rounded-2xl mt-4 relative z-10">
+               <p id="divFeedbackResult" class="font-black text-2xl mb-2"></p>
+               <p id="divFeedbackReason" class="text-sm font-bold leading-relaxed"></p>
+               <button id="divNextBtn" class="mt-3 w-full py-3 rounded-lg bg-indigo-600 text-white font-bold text-sm shadow active:scale-[0.98]">Soal Berikutnya</button>
+            </div>
+            </div> <!-- Close divPlayArea -->
+            <div id="divConfetti" class="confetti">🎉</div>
+          </div>
+        </section>
       </main>
     </div>
   </div>
@@ -736,12 +912,20 @@
     let smEnd = null;
     let smDelayTimer = null;
     let smConfettiTimer = null;
+    
+    let divStart = null;
+    let divEnd = null;
+    let divDurationMs = null;
+    let divTargetScoreVal = 0;
+    let divScoreObj = 0;
 
     function showSection(section) {
       menuSection.classList.toggle('hidden', section !== 'menu');
       studySection.classList.toggle('hidden', section !== 'study');
       quizSection.classList.toggle('hidden', section !== 'quiz');
       speedMathSection.classList.toggle('hidden', section !== 'speedMath');
+      const divisibilitySectionElem = document.getElementById('divisibilitySection');
+      if (divisibilitySectionElem) divisibilitySectionElem.classList.toggle('hidden', section !== 'divisibility');
       appShell.classList.toggle('menu-center', section === 'menu');
       appContent.classList.toggle('menu-stack', section === 'menu');
       if (section === 'study') {
@@ -813,6 +997,12 @@
         speedMathTimer.textContent = '00:00';
         smEnd = smDurationMs ? smStart + smDurationMs : null;
       }
+      if (mode === 'divisibility') {
+        divStart = Date.now();
+        const tBtn = document.getElementById('divTimer');
+        if (tBtn) tBtn.textContent = '00:00';
+        divEnd = divDurationMs ? divStart + divDurationMs : null;
+      }
       timerInterval = setInterval(() => {
         if (studyStart) {
           if (studyEnd) {
@@ -865,6 +1055,29 @@
             speedMathTimer.textContent = formatTime(Date.now() - smStart);
           }
         }
+        if (divStart) {
+          if (divEnd) {
+            const remaining = Math.max(0, divEnd - Date.now());
+            const tBtn = document.getElementById('divTimer');
+            if (tBtn) tBtn.textContent = formatTime(remaining);
+            if (remaining === 0) {
+              stopTimer();
+              if (divTargetScoreVal > 0) {
+                if (divScoreObj >= divTargetScoreVal) {
+                  alert(`Waktu Habis!\nLuar Biasa! Kamu melampaui target skor (${divTargetScoreVal}).\nSkor Akhir: ${divScoreObj}`);
+                } else {
+                  alert(`Waktu Habis!\nTerus Berlatih! Kamu belum mencapai target skor (${divTargetScoreVal}).\nSkor Akhir: ${divScoreObj}`);
+                }
+              } else {
+                alert(`Waktu Habis!\nSkor Akhir Kamu: ${divScoreObj}`);
+              }
+              showSection('menu');
+            }
+          } else {
+            const tBtn = document.getElementById('divTimer');
+            if (tBtn) tBtn.textContent = formatTime(Date.now() - divStart);
+          }
+        }
       }, 1000);
     }
 
@@ -876,9 +1089,11 @@
       studyStart = null;
       quizStart = null;
       smStart = null;
+      divStart = null;
       studyEnd = null;
       quizEnd = null;
       smEnd = null;
+      divEnd = null;
     }
 
     function isAcceptedAnswer(input, item, mode) {
@@ -1548,6 +1763,233 @@
         setTimeout(() => speedMathCard.classList.remove('shake'), 450);
       }
     });
+
+    // --- DIVISIBILITY (ATURAN PEMBAGIAN) LOGIC ---
+    const divisibilitySection = document.getElementById('divisibilitySection');
+    const startDivisibility = document.getElementById('startDivisibility');
+    const backFromDivisibility = document.getElementById('backFromDivisibility');
+    const tabMateri = document.getElementById('tabMateri');
+    const tabLatihan = document.getElementById('tabLatihan');
+    const divMateriPanel = document.getElementById('divMateriPanel');
+    const divLatihanPanel = document.getElementById('divLatihanPanel');
+    
+    if (startDivisibility) {
+      startDivisibility.addEventListener('click', () => {
+        showSection('divisibility');
+        tabMateri.click();
+      });
+      backFromDivisibility.addEventListener('click', () => showSection('menu'));
+      
+      tabMateri.addEventListener('click', () => {
+        divMateriPanel.classList.remove('hidden');
+        divLatihanPanel.classList.add('hidden');
+        
+        tabMateri.className = 'pill-btn py-3 rounded-2xl font-bold bg-rose-500/80 text-white border-b-4 border-rose-700 shadow-md';
+        tabLatihan.className = 'pill-btn py-3 rounded-2xl font-bold bg-white text-rose-700 border-b-4 border-rose-200 shadow-md';
+        
+        const dTBtn = document.getElementById('divTimer');
+        const dSBtn = document.getElementById('divSettingsBtn');
+        if(dTBtn) dTBtn.classList.add('hidden');
+        if(dSBtn) dSBtn.classList.add('hidden');
+        stopTimer();
+      });
+      
+      tabLatihan.addEventListener('click', () => {
+        divLatihanPanel.classList.remove('hidden');
+        divMateriPanel.classList.add('hidden');
+        
+        tabLatihan.className = 'pill-btn py-3 rounded-2xl font-bold bg-rose-500/80 text-white border-b-4 border-rose-700 shadow-md';
+        tabMateri.className = 'pill-btn py-3 rounded-2xl font-bold bg-white text-rose-700 border-b-4 border-rose-200 shadow-md';
+        
+        const dTBtn = document.getElementById('divTimer');
+        const dSBtn = document.getElementById('divSettingsBtn');
+        if(dTBtn) dTBtn.classList.remove('hidden');
+        if(dSBtn) dSBtn.classList.remove('hidden');
+        
+        if (!divStart && divScoreObj === 0) {
+            startTimer('divisibility');
+            if(divState === 'waiting' && !currentDivQuery) nextDivisibilityQuestion();
+        } else if (!divStart && divScoreObj > 0) {
+            startTimer('divisibility');
+        }
+      });
+
+      let divDivisors = [2, 3, 4, 5, 6, 7, 8];
+      let divTimeMin = 0; // 0 = no limit
+      divScoreObj = 0;
+      let divState = 'waiting';
+      let currentDivQuery = null;
+      let divConfettiTimerVal = null;
+      
+      const divSettingsBtn = document.getElementById('divSettingsBtn');
+      if (divSettingsBtn) {
+          divSettingsBtn.addEventListener('click', () => {
+             document.getElementById('divSettingsPanel').classList.toggle('hidden');
+             document.getElementById('divPlayArea').classList.toggle('hidden');
+          });
+      }
+      
+      const divNumBtns = Array.from(document.querySelectorAll('.div-num-btn'));
+      divNumBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+              const val = Number(btn.dataset.divNum);
+              if (divDivisors.includes(val)) {
+                  if (divDivisors.length > 1) {
+                      divDivisors = divDivisors.filter(n => n !== val);
+                  }
+              } else {
+                  divDivisors.push(val);
+              }
+              updateDivSettingsUI();
+          });
+      });
+      
+      const divTimeBtns = Array.from(document.querySelectorAll('.div-time-btn'));
+      divTimeBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+              divTimeMin = Number(btn.dataset.divTime);
+              updateDivSettingsUI();
+          });
+      });
+      
+      function updateDivSettingsUI() {
+          divNumBtns.forEach(btn => {
+              const val = Number(btn.dataset.divNum);
+              const isActive = divDivisors.includes(val);
+              btn.className = 'div-num-btn pill-btn px-4 py-2 rounded-full text-sm font-bold border-b-4 shadow-sm transition-all hover:scale-[1.01]';
+              if (isActive) btn.classList.add('bg-rose-500', 'text-white', 'border-rose-700');
+              else btn.classList.add('bg-white', 'text-slate-600', 'border-slate-200');
+          });
+          
+          divTimeBtns.forEach(btn => {
+              const val = Number(btn.dataset.divTime);
+              btn.className = 'div-time-btn pill-btn px-3 py-1.5 rounded-full text-xs font-bold border-b-4 shadow-sm transition-all hover:scale-[1.01]';
+              if (divTimeMin === val) btn.classList.add('bg-rose-500', 'text-white', 'border-rose-700');
+              else btn.classList.add('bg-slate-100', 'text-slate-600', 'border-slate-200');
+          });
+      }
+      
+      const applyDivSettings = document.getElementById('applyDivSettings');
+      if (applyDivSettings) {
+          applyDivSettings.addEventListener('click', () => {
+              const inTarget = document.getElementById('divTargetScore');
+              divTargetScoreVal = inTarget && inTarget.value ? parseInt(inTarget.value, 10) : 0;
+              divDurationMs = divTimeMin > 0 ? divTimeMin * 60 * 1000 : null;
+              
+              document.getElementById('divSettingsPanel').classList.add('hidden');
+              document.getElementById('divPlayArea').classList.remove('hidden');
+              
+              divScoreObj = 0;
+              document.getElementById('divScore').textContent = divScoreObj;
+              startTimer('divisibility');
+              nextDivisibilityQuestion();
+          });
+      }
+
+      function generateDivisibilityProof(num, d) {
+          const numStr = String(num);
+          const lastDigit = parseInt(numStr.slice(-1));
+          const lastTwo = parseInt(numStr.slice(-2)) || num;
+          const lastThree = parseInt(numStr.slice(-3)) || num;
+          const sumDigits = numStr.split('').reduce((a,b)=>a+parseInt(b), 0);
+          
+          if(d===2) return `Digit terakhir adalah ${lastDigit}, yang merupakan bilangan ${lastDigit%2===0?'genap':'ganjil'}.`;
+          if(d===3) return `Jumlah digit: ${numStr.split('').join(' + ')} = ${sumDigits}. ${sumDigits} ${sumDigits%3===0?'habis':'tidak habis'} dibagi 3.`;
+          if(d===4) return `Dua digit terakhir adalah ${numStr.length>=2 ? numStr.slice(-2) : numStr}. ${lastTwo} ${lastTwo%4===0?'habis':'tidak habis'} dibagi 4.`;
+          if(d===5) return `Digit terakhir adalah ${lastDigit}, ${lastDigit===0||lastDigit===5?'yaitu 0 atau 5':'bukan 0 atau 5'}.`;
+          if(d===6) {
+              const isM2 = num%2===0;
+              const isM3 = sumDigits%3===0;
+              if (isM2 && isM3) return `Genap dan jumlah digitnya ${sumDigits} kelipatan 3.`;
+              if (!isM2) return `Bukan bilangan genap.`;
+              return `Genap tapi jumlah digitnya ${sumDigits} bukan kelipatan 3.`;
+          }
+          if(d===7) {
+              const trunk = parseInt(numStr.slice(0, -1));
+              const res = trunk - (lastDigit*2);
+              return `Tanpa digit terakhir: ${trunk}. Digit akhir x2 = ${lastDigit*2}. ${trunk} - ${lastDigit*2} = ${res}. ${res} ${res%7===0?'kelipatan 7':'bukan kelipatan 7'}.`;
+          }
+          if(d===8) return `Tiga digit terakhir: ${numStr.length>=3 ? numStr.slice(-3) : numStr}. ${lastThree} ${lastThree%8===0?'habis':'tidak habis'} dibagi 8.`;
+          return "";
+      }
+
+      function nextDivisibilityQuestion() {
+          const d = divDivisors[Math.floor(Math.random() * divDivisors.length)];
+          let isDivisible = Math.random() > 0.5;
+          let num;
+          
+          if(isDivisible) {
+               num = randomInt(11, 999) * d;
+               if (d===8 && num < 1000) num += 1000;
+          } else {
+               num = randomInt(11, 999) * d + randomInt(1, d-1);
+               if (d===8 && num < 1000) num += 1000;
+          }
+          
+          currentDivQuery = { number: num, divisor: d, answer: isDivisible };
+          
+          document.getElementById('divQuestionText').innerHTML = `Apakah <strong>${num}</strong> habis dibagi <strong>${d}</strong>?`;
+          
+          document.getElementById('divFeedbackBox').classList.add('hidden');
+          document.getElementById('divBtnYes').classList.remove('hidden');
+          document.getElementById('divBtnNo').classList.remove('hidden');
+          document.getElementById('divLatihanPanel').classList.remove('glow-correct', 'shake');
+          
+          if(divConfettiTimerVal) {
+             clearTimeout(divConfettiTimerVal);
+             divConfettiTimerVal = null;
+          }
+          document.getElementById('divConfetti').classList.remove('show');
+          
+          divState = 'waiting';
+      }
+
+      function handleDivAnswer(userSaysYes) {
+          if (divState !== 'waiting') return;
+          divState = 'answered';
+          
+          const isCorrect = userSaysYes === currentDivQuery.answer;
+          const fbBox = document.getElementById('divFeedbackBox');
+          const fbRes = document.getElementById('divFeedbackResult');
+          const fbRea = document.getElementById('divFeedbackReason');
+          
+          document.getElementById('divBtnYes').classList.add('hidden');
+          document.getElementById('divBtnNo').classList.add('hidden');
+          
+          fbBox.className = 'p-5 rounded-2xl mt-4 relative z-10'; // Reset classes
+          
+          if (isCorrect) {
+             divScoreObj += 10;
+             document.getElementById('divScore').textContent = divScoreObj;
+             fbRes.textContent = "Benar! 🎉";
+             fbRes.className = "font-black text-2xl mb-2 text-emerald-600";
+             fbRea.className = "text-sm font-bold text-emerald-800 leading-relaxed";
+             fbBox.classList.add('bg-emerald-50', 'border-2', 'border-emerald-200');
+             document.getElementById('divLatihanPanel').classList.add('glow-correct');
+             
+             document.getElementById('divConfetti').classList.add('show');
+             divConfettiTimerVal = setTimeout(() => {
+                document.getElementById('divConfetti').classList.remove('show');
+             }, 1000);
+          } else {
+             divScoreObj = Math.max(0, divScoreObj - 5);
+             document.getElementById('divScore').textContent = divScoreObj;
+             fbRes.textContent = "Salah 😔";
+             fbRes.className = "font-black text-2xl mb-2 text-rose-600";
+             fbRea.className = "text-sm font-bold text-rose-800 leading-relaxed";
+             fbBox.classList.add('bg-rose-50', 'border-2', 'border-rose-200');
+             document.getElementById('divLatihanPanel').classList.add('shake');
+             setTimeout(()=> document.getElementById('divLatihanPanel').classList.remove('shake'), 450);
+          }
+          
+          fbRea.innerHTML = generateDivisibilityProof(currentDivQuery.number, currentDivQuery.divisor);
+          fbBox.classList.remove('hidden');
+      }
+      
+      document.getElementById('divBtnYes').addEventListener('click', () => handleDivAnswer(true));
+      document.getElementById('divBtnNo').addEventListener('click', () => handleDivAnswer(false));
+      document.getElementById('divNextBtn').addEventListener('click', () => nextDivisibilityQuestion());
+    }
   </script>
 </body>
 
