@@ -1119,7 +1119,22 @@
         return false;
       } else if (mode === 'decimalToFraction' || mode === 'percentToFraction') {
         const cleanedInput = input.trim().replace(/\s/g, '');
-        return cleanedInput === item.fraction;
+        if (cleanedInput === item.fraction) return true;
+        
+        if (cleanedInput.includes('/')) {
+            const parts = cleanedInput.split('/');
+            if (parts.length === 2) {
+                const num = parseInt(parts[0], 10);
+                const den = parseInt(parts[1], 10);
+                if (!isNaN(num) && !isNaN(den) && den !== 0) {
+                    const val = num / den;
+                    if (Math.abs(val - item.decimalValue) < 0.0001) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
       }
       return false;
     }
