@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rapor Statistik - Math Master</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+    .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-[#1a1f4d] via-[#251b60] to-[#3b1c85] text-white p-4 sm:p-8">
+
+  <div class="max-w-4xl mx-auto space-y-6">
+    
+    <header class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-black text-white drop-shadow-md">Rapor Statistik</h1>
+        <p class="text-indigo-200 mt-1" id="studentName">Data sedang dimuat...</p>
+      </div>
+      <button onclick="window.location.href='index.html'" class="px-5 py-2 rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-sm font-semibold transition">
+        Kembali ke Menu
+      </button>
+    </header>
+
+    <div id="loadingIndicator" class="text-center py-10">
+      <p class="animate-pulse text-indigo-300 font-bold text-xl">Menganalisis Performa...</p>
+    </div>
+
+    <!-- Ringkasan Singkat -->
+    <div id="summaryCards" class="grid grid-cols-2 md:grid-cols-4 gap-4 hidden">
+      <div class="glass-card rounded-2xl p-5 border border-white/30 shadow-lg relative overflow-hidden flex flex-col justify-between">
+        <div>
+          <p class="text-[10px] uppercase font-bold text-indigo-800 mb-1">💪 Total Latihan</p>
+          <p class="text-3xl font-black text-indigo-600" id="statTotalSessions">0</p>
+        </div>
+        <p class="text-[10px] text-slate-500 mt-2 font-semibold">Semua aktivitas</p>
+      </div>
+      <div class="glass-card rounded-2xl p-5 border border-white/30 shadow-lg relative overflow-hidden flex flex-col justify-between">
+        <div>
+          <p class="text-[10px] uppercase font-bold text-emerald-800 mb-1">⭐ Rata-rata Skor</p>
+          <p class="text-3xl font-black text-emerald-600" id="statAvgScore">0</p>
+        </div>
+        <p class="text-[10px] text-slate-500 mt-2 font-semibold">Terus tingkatkan nilai!</p>
+      </div>
+      <div class="glass-card rounded-2xl p-5 border border-white/30 shadow-lg relative overflow-hidden flex flex-col justify-between">
+        <div>
+          <p class="text-[10px] uppercase font-bold text-amber-800 mb-1">🎯 Akurasi</p>
+          <p class="text-3xl font-black text-amber-600" id="statAccuracy">0%</p>
+        </div>
+        <p class="text-[10px] text-slate-500 mt-2 font-semibold">Persentase jawaban benar</p>
+      </div>
+      <div class="glass-card rounded-2xl p-5 border border-white/30 shadow-lg relative overflow-hidden flex flex-col justify-between">
+        <div>
+          <p class="text-[10px] uppercase font-bold text-rose-800 mb-1">⚡ Kec. Menjawab</p>
+          <p class="text-3xl font-black text-rose-600" id="statAvgSpeed">0s</p>
+        </div>
+        <p class="text-[10px] text-slate-500 mt-2 font-semibold">Rata-rata waktu per soal</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6 hidden" id="dashboardContent">
+      
+      <!-- Grafik Perkembangan -->
+      <div class="col-span-1 md:col-span-2 glass-card rounded-3xl p-6 border border-white/30 shadow-xl">
+        <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2">Grafik Riwayat Latihan Terakhir</h3>
+        <div class="relative w-full h-[250px]">
+          <canvas id="scoreChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Analisa Kelemahan -->
+      <div class="col-span-1 glass-card rounded-3xl p-6 border border-white/30 shadow-xl bg-rose-50/90">
+        <h3 class="text-lg font-bold text-rose-800 mb-4 border-b border-rose-200 pb-2">Analisis Kelemahan</h3>
+        <p class="text-xs text-rose-600 font-semibold mb-3">Tipe soal yang paling sering dijawab salah:</p>
+        <ul id="weaknessList" class="space-y-3">
+          <!-- Weakness JS populated -->
+        </ul>
+        <div id="noWeaknessMsg" class="hidden text-center py-6 text-sm font-bold text-emerald-600">
+          Luar biasa! Belum ada soal yang sering salah.
+        </div>
+      </div>
+      </div>
+    </div>
+
+    <!-- Riwayat Ujian Akhir -->
+    <div id="historySection" class="glass-card rounded-3xl p-6 border border-white/30 shadow-xl mt-6 hidden">
+      <h3 class="text-lg font-bold text-slate-800 mb-4 border-b pb-2">📋 Riwayat Ujian & Latihan Terakhir</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-slate-700">
+          <thead class="text-xs text-indigo-900 uppercase bg-indigo-50/70 rounded-t-xl">
+            <tr>
+              <th scope="col" class="px-6 py-4 rounded-tl-lg font-black">Waktu</th>
+              <th scope="col" class="px-6 py-4 font-black">Mode Ujian</th>
+              <th scope="col" class="px-6 py-4 font-black">Skor Total</th>
+              <th scope="col" class="px-6 py-4 font-black">Akurasi</th>
+              <th scope="col" class="px-6 py-4 rounded-tr-lg font-black">Durasi</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody" class="divide-y divide-slate-200/60 bg-white/40">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:5000/api';
+    let currentUser = null;
+    let scoreChartInstance = null;
+
+    async function initDashboard() {
+      const stored = localStorage.getItem('mathMasterUser');
+      if (!stored) {
+        window.location.href = 'index.html';
+        return;
+      }
+      currentUser = JSON.parse(stored);
+      document.getElementById('studentName').textContent = currentUser.nama;
+
+      try {
+        const res = await fetch(`${API_URL}/analytics/${currentUser._id}`);
+        const data = await res.json();
+        
+        document.getElementById('loadingIndicator').classList.add('hidden');
+        document.getElementById('summaryCards').classList.remove('hidden');
+        document.getElementById('dashboardContent').classList.remove('hidden');
+        const histSection = document.getElementById('historySection');
+        if(histSection) histSection.classList.remove('hidden');
+
+        if (data.success && data.sessions.length > 0) {
+          processAnalytics(data.sessions);
+        } else {
+          showEmptyState();
+        }
+      } catch (err) {
+        console.error(err);
+        document.getElementById('loadingIndicator').innerHTML = '<p class="text-rose-400">Gagal mengambil data dari server. Pastikan Backend berjalan.</p>';
+      }
+    }
+
+    function showEmptyState() {
+      document.getElementById('studentName').textContent += " (Belum ada data latihan)";
+      document.getElementById('noWeaknessMsg').classList.remove('hidden');
+      document.getElementById('noWeaknessMsg').textContent = "Kamu belum pernah menjawab tes. Ayo mulai latihan!";
+    }
+
+    function processAnalytics(sessions) {
+      document.getElementById('statTotalSessions').textContent = sessions.length;
+
+      let totalScores = 0;
+      let totalTimeOverallMs = 0;
+      let totalQuestionsAnswered = 0;
+      let totalQuestionsCorrect = 0;
+
+      const errorsMap = {}; // To find weaknesses
+
+      // Reverse so oldest is first for the chart
+      const reversedSessions = [...sessions].reverse();
+      const chartLabels = [];
+      const datasetsMap = {};
+      const colors = ['#f43f5e', '#10b981', '#f59e0b', '#8b5cf6', '#3b82f6'];
+      let colorIdx = 0;
+
+      reversedSessions.forEach((s, i) => {
+        totalScores += s.totalScore;
+        
+        let dStr = s.createdAt ? new Date(s.createdAt).toLocaleString('id-ID', {day: '2-digit', month: '2-digit', hour: '2-digit', minute:'2-digit'}) : 'Sesi ' + (i+1);
+        chartLabels.push(dStr);
+
+        if (!datasetsMap[s.quizType]) {
+          datasetsMap[s.quizType] = {
+            label: s.quizType,
+            data: new Array(sessions.length).fill(null),
+            borderColor: colors[colorIdx % colors.length],
+            backgroundColor: colors[colorIdx % colors.length] + '33',
+            borderWidth: 3, tension: 0.3, fill: false, pointRadius: 5
+          };
+          colorIdx++;
+        }
+        
+        // Plot point for this session in the correct dataset
+        datasetsMap[s.quizType].data[i] = s.totalScore;
+
+        if(s.questionsDetail && s.questionsDetail.length > 0) {
+          totalTimeOverallMs += s.totalTime;
+          s.questionsDetail.forEach(q => {
+            totalQuestionsAnswered++;
+            if (q.isCorrect) {
+              totalQuestionsCorrect++;
+            } else {
+              // Group mistakes by question string
+              errorsMap[q.question] = (errorsMap[q.question] || 0) + 1;
+            }
+          });
+        }
+      });
+
+      const avgScore = totalScores / sessions.length;
+      document.getElementById('statAvgScore').textContent = Math.round(avgScore);
+
+      const accuracy = totalQuestionsAnswered > 0 ? (totalQuestionsCorrect / totalQuestionsAnswered) * 100 : 0;
+      document.getElementById('statAccuracy').textContent = Math.round(accuracy) + "%";
+
+      const avgSpeedMs = totalQuestionsAnswered > 0 ? (totalTimeOverallMs / totalQuestionsAnswered) : 0;
+      document.getElementById('statAvgSpeed').textContent = (avgSpeedMs / 1000).toFixed(1) + "s";
+
+      const datasetsArr = Object.values(datasetsMap);
+      renderChart(chartLabels, datasetsArr);
+      renderWeaknesses(errorsMap);
+      renderHistory(sessions);
+    }
+
+    function renderChart(labels, datasetsArr) {
+      const ctx = document.getElementById('scoreChart').getContext('2d');
+      if (scoreChartInstance) scoreChartInstance.destroy();
+
+      scoreChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: datasetsArr
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          spanGaps: true, // connect lines over empty spots
+          plugins: {
+            legend: { 
+              display: true, 
+              position: 'top',
+              labels: { font: { family: "'Poppins', sans-serif", weight: 'bold' } }
+            }
+          },
+          scales: {
+            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    }
+
+    function renderWeaknesses(errorsMap) {
+      // Sort errors by frequency
+      const sortedErrors = Object.entries(errorsMap).sort((a,b) => b[1] - a[1]);
+      const listEl = document.getElementById('weaknessList');
+      const noWeakness = document.getElementById('noWeaknessMsg');
+
+      if (sortedErrors.length === 0) {
+        noWeakness.classList.remove('hidden');
+      } else {
+        noWeakness.classList.add('hidden');
+        const topWeaknesses = sortedErrors.slice(0, 3); // Take top 3
+        topWeaknesses.forEach(([question, count]) => {
+           const li = document.createElement('li');
+           li.className = 'p-3 bg-white/60 rounded-xl border border-rose-100 shadow-sm flex flex-col';
+           li.innerHTML = `<span class="text-xs font-bold text-rose-900">${question}</span>
+                           <span class="text-[10px] text-rose-500 font-semibold mt-1">Salah ${count} kali</span>`;
+           listEl.appendChild(li);
+        });
+      }
+    }
+
+    function renderHistory(sessions) {
+      const tbody = document.getElementById('historyTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      
+      [...sessions].reverse().forEach(s => {
+        let correctCount = 0;
+        let totalCount = s.questionsDetail ? s.questionsDetail.length : 0;
+        if(totalCount > 0) {
+          correctCount = s.questionsDetail.filter(q => q.isCorrect).length;
+        }
+        const acc = totalCount > 0 ? Math.round((correctCount/totalCount)*100) + '%' : '-';
+        
+        let dateStr = "Belum dicatat";
+        if (s.createdAt) {
+           dateStr = new Date(s.createdAt).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' });
+        } else {
+           dateStr = new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' });
+        }
+        
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-white/70 transition-colors backdrop-blur-sm';
+        
+        // Let's create badge colors for different modes
+        let badgeClass = "bg-indigo-100 text-indigo-800";
+        if (s.quizType === 'Hitung Cepat') badgeClass = "bg-amber-100 text-amber-800";
+        if (s.quizType === 'Tes Kilat') badgeClass = "bg-emerald-100 text-emerald-800";
+
+        tr.innerHTML = `
+          <td class="px-6 py-4 font-medium text-slate-600 whitespace-nowrap">${dateStr}</td>
+          <td class="px-6 py-4 font-black"><span class="px-3 py-1 text-xs rounded-full shadow-sm ${badgeClass}">${s.quizType}</span></td>
+          <td class="px-6 py-4 font-black text-indigo-900 text-base">${s.totalScore}</td>
+          <td class="px-6 py-4 text-emerald-600 font-bold">${acc}</td>
+          <td class="px-6 py-4 text-slate-500 font-semibold">${(s.totalTime / 1000).toFixed(1)}s</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    initDashboard();
+  </script>
+</body>
+</html>
