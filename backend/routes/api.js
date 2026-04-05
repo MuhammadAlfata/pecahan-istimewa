@@ -110,4 +110,19 @@ router.get('/leaderboard', async (req, res) => {
   }
 });
 
+// Reset Database API (DANGEROUS)
+router.delete('/admin/reset', async (req, res) => {
+  const { pin } = req.query;
+  if (pin !== 'guru123') {
+    return res.status(401).json({ error: 'PIN Admin salah atau tidak valid.' });
+  }
+  try {
+    await User.deleteMany({});
+    await Session.deleteMany({});
+    res.status(200).json({ success: true, message: 'Database reset successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

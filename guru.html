@@ -32,9 +32,14 @@
         <h1 class="text-3xl font-black text-white drop-shadow-md">👨‍🏫 Dashboard Guru</h1>
         <p class="text-indigo-300 mt-1">Panel Kendali Utama Math Master</p>
       </div>
-      <button onclick="window.location.href='index.html'" class="px-5 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-sm font-semibold transition">
-        Beranda Utama
-      </button>
+      <div class="flex gap-2">
+        <button id="resetDbBtn" class="px-5 py-2 rounded-full bg-rose-600/90 hover:bg-rose-500 border border-rose-500/50 text-sm font-bold shadow-lg shadow-rose-900/50 transition flex items-center gap-2">
+          ⚠ Reset DB
+        </button>
+        <button onclick="window.location.href='index.html'" class="px-5 py-2 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-sm font-semibold transition">
+          Beranda Utama
+        </button>
+      </div>
     </header>
 
     <div id="loadingIndicator" class="text-center py-10">
@@ -357,6 +362,27 @@
     }
 
     // initDashboard dipanggil oleh tombol Login
+
+    document.getElementById('resetDbBtn').addEventListener('click', async () => {
+       const confirmed = confirm("⚠ PERINGATAN KERAS ⚠\n\nApakah Anda yakin ingin MENGHAPUS SELURUH ARSIP SISWA DAN SKOR dari Database?\nTindakan ini bersifat permanen dan tidak bisa dibatalkan.");
+       if (!confirmed) return;
+       
+       const doubleConfirm = prompt("Ketik 'HAPUS' untuk mengonfirmasi:");
+       if (doubleConfirm !== 'HAPUS') return;
+
+       try {
+           const res = await fetch(`${API_URL}/admin/reset?pin=${adminPinValidated}`, { method: 'DELETE' });
+           const data = await res.json();
+           if (data.success) {
+               alert("Database berhasil dibersihkan! Semua kembali dari Nol.");
+               location.reload();
+           } else {
+               alert("Gagal menghapus database: " + data.error);
+           }
+       } catch (e) {
+           alert("Kesalahan koneksi saat menghapus.");
+       }
+    });
 
   </script>
 </body>
