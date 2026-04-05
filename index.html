@@ -910,7 +910,7 @@
     const logoutBtn = document.getElementById('logoutBtn');
     
     // API State
-    const API_URL = 'http://localhost:5000/api';
+    const API_URL = (location.hostname === 'localhost' || location.protocol === 'file:') ? 'http://localhost:5000/api' : '/api';
     let currentUser = null;
     let currentQuizDetail = []; // For storing question logs
 

@@ -60,4 +60,19 @@ router.get('/analytics/:userId', async (req, res) => {
   }
 });
 
+// Get All Data for Admin Dashboard
+router.get('/admin/all-data', async (req, res) => {
+  const { pin } = req.query;
+  if (pin !== 'guru123') {
+    return res.status(401).json({ error: 'PIN Admin salah atau tidak valid.' });
+  }
+  try {
+    const users = await User.find({});
+    const sessions = await Session.find({});
+    res.status(200).json({ success: true, users, sessions });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

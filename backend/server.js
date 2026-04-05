@@ -18,9 +18,14 @@ app.use('/api', apiRoutes);
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/math_master')
   .then(() => {
     console.log('Connected to MongoDB');
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
   }).catch((error) => {
     console.error('MongoDB connection error:', error);
   });
+
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT} (Local)`);
+  });
+}
+
+module.exports = app;
