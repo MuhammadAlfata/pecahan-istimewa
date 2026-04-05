@@ -223,6 +223,15 @@
           </div>
         </section>
 
+        <!-- Papan Peringkat Global -->
+        <section id="leaderboardSection" class="mt-4 bg-white/80 backdrop-blur-xl border border-white/40 rounded-3xl shadow-2xl shadow-indigo-900/30 p-6 sm:p-7 hidden">
+          <div class="flex items-center justify-center mb-4 border-b border-indigo-100 pb-4">
+             <h3 class="text-lg font-black text-slate-800 uppercase tracking-widest text-center flex items-center gap-2">🏆 Papan Peringkat</h3>
+          </div>
+          <div id="leaderboardList" class="flex flex-col gap-2">
+             <p class="text-center text-sm font-semibold text-slate-500 py-4">Memuat data peringkat...</p>
+          </div>
+        </section>
 
 
         <!-- Study Mode -->
@@ -963,6 +972,14 @@
       speedMathSection.classList.toggle('hidden', section !== 'speedMath');
       const divisibilitySectionElem = document.getElementById('divisibilitySection');
       if (divisibilitySectionElem) divisibilitySectionElem.classList.toggle('hidden', section !== 'divisibility');
+      
+      const leaderboardSectionElem = document.getElementById('leaderboardSection');
+      if (leaderboardSectionElem) {
+        const showLeaderboard = (section === 'menu' || section === 'login');
+        leaderboardSectionElem.classList.toggle('hidden', !showLeaderboard);
+        if (showLeaderboard) fetchLeaderboard();
+      }
+
       appShell.classList.toggle('menu-center', section === 'menu' || section === 'login');
       appContent.classList.toggle('menu-stack', section === 'menu' || section === 'login');
       if (section === 'study') {
@@ -984,6 +1001,45 @@
       }
       if (section === 'menu' || section === 'login') stopTimer();
       if (section === 'study') maybeShowStudyHint();
+    }
+
+    async function fetchLeaderboard() {
+      if (!document.getElementById('leaderboardList')) return;
+      try {
+         const res = await fetch(`${API_URL}/leaderboard`);
+         const data = await res.json();
+         if (data.success) {
+            const listEl = document.getElementById('leaderboardList');
+            if (data.leaderboard.length === 0) {
+               listEl.innerHTML = '<p class="text-center text-sm font-semibold text-slate-500 py-4">Belum ada data skor.</p>';
+               return;
+            }
+            listEl.innerHTML = data.leaderboard.map((u, i) => {
+               let medal = '';
+               if(i === 0) medal = '🥇 ';
+               else if (i === 1) medal = '🥈 ';
+               else if (i === 2) medal = '🥉 ';
+               
+               return `
+                 <div class="flex items-center justify-between p-3 rounded-xl bg-white/50 border border-slate-100 hover:bg-white inset-transition shadow-sm">
+                   <div class="flex items-center gap-3">
+                     <span class="w-6 font-bold text-slate-400 text-sm">${i+1}.</span>
+                     <div>
+                       <p class="font-bold text-slate-800">${medal}${u.nama}</p>
+                       <p class="text-[10px] uppercase font-bold text-slate-400">${u.totalExams} Ujian Selesai</p>
+                     </div>
+                   </div>
+                   <div class="text-right">
+                     <p class="text-xs text-slate-500 font-bold uppercase mb-0.5" style="font-size: 8px;">Skor Rata-Rata</p>
+                     <p class="font-black text-indigo-600">${u.averageScore}</p>
+                   </div>
+                 </div>
+               `;
+            }).join('');
+         }
+      } catch(e) {
+         console.error('Failed to fetch leaderboard:', e);
+      }
     }
 
     function filteredStudyData() {

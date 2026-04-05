@@ -282,15 +282,19 @@
          }
 
          // Find top weakness
-         let topWeakness = "-";
+         let fullTopWeakness = "-";
          let maxE = 0;
          Object.keys(errorsCount).forEach(k => {
              if (errorsCount[k] > maxE) {
                  maxE = errorsCount[k];
-                 topWeakness = k; 
+                 fullTopWeakness = k; 
              }
          });
-         if (topWeakness.length > 25) topWeakness = topWeakness.substring(0, 22) + "...";
+         
+         let topWeakness = fullTopWeakness;
+         if (topWeakness !== '-' && topWeakness.length > 25) {
+             topWeakness = topWeakness.substring(0, 22) + "...";
+         }
 
          return {
             nama: u.nama,
@@ -300,6 +304,7 @@
             accuracy: acc,
             favoriteMode: favMode,
             topWeakness: topWeakness,
+            fullTopWeakness: fullTopWeakness,
             lastActive: sList.length > 0 ? new Date(Math.max(...sList.map(s => new Date(s.createdAt || 0)))) : null
          };
       });
@@ -345,7 +350,7 @@
             <td class="px-6 py-4 font-black ${su.averageScore > 0 ? 'text-indigo-600' : 'text-slate-400'}">${Math.round(su.averageScore)}</td>
             <td class="px-6 py-4 font-bold ${accColor}">${accStr}</td>
             <td class="px-6 py-4 font-black"><span class="px-3 py-1 text-[10px] rounded-full shadow-sm ${badgeClass}">${su.favoriteMode}</span></td>
-            <td class="px-6 py-4 font-bold text-rose-600 text-xs">${su.topWeakness !== '-' ? '⚠ ' + su.topWeakness : '-'}</td>
+            <td class="px-6 py-4 font-bold text-rose-600 text-xs cursor-help" title="${su.fullTopWeakness.replace(/"/g, '&quot;')}">${su.topWeakness !== '-' ? '⚠ ' + su.topWeakness : '-'}</td>
          `;
          tbody.appendChild(tr);
       });

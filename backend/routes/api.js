@@ -75,4 +75,39 @@ router.get('/admin/all-data', async (req, res) => {
   }
 });
 
+// Public Leaderboard API
+router.get('/leaderboard', async (req, res) => {
+  try {
+    const users = await User.find({});
+    const sessions = await Session.find({});
+    
+    const userMap = {};
+    users.forEach(u => {
+       userMap[u._id] = { nama: u.nama, totalScore: 0, totalExams: 0 };
+    });
+
+    sessions.forEach(s => {
+       if (userMap[s.userId]) {
+          userMap[s.userId].totalScore += s.totalScore;
+          userMap[s.userId].totalExams += 1;
+       }
+    });
+
+    // Compute average and sort
+    const leaderboard = Object.values(userMap).map(u => ({
+       nama: u.nama,
+       totalExams: u.totalExams,
+       averageScore: u.totalExams > 0 ? Math.round(u.totalScore / u.totalExams) : 0
+    })).filter(u => u.totalExams > 0);
+
+    // Sort by Average Score descending
+    leaderboard.sort((a,b) => b.averageScore - a.averageScore);
+
+    // Return Top 10
+    res.status(200).json({ success: true, leaderboard: leaderboard.slice(0, 10) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
