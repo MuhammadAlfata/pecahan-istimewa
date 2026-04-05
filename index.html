@@ -1165,18 +1165,22 @@
           promptEl.textContent = 'Ubah pecahan ini ke desimal';
           currentFraction.textContent = quizFraction.fraction;
           answerInput.placeholder = "contoh: 0.5 atau 0,5";
+          answerInput.setAttribute('inputmode', 'decimal');
       } else if (currentQuizMode === 'fractionToPercent') {
           promptEl.textContent = 'Ubah pecahan ini ke persen (%)';
           currentFraction.textContent = quizFraction.fraction;
           answerInput.placeholder = "contoh: 50 atau 50%";
+          answerInput.setAttribute('inputmode', 'decimal');
       } else if (currentQuizMode === 'decimalToFraction') {
           promptEl.textContent = 'Ubah desimal ini ke pecahan';
           currentFraction.textContent = quizFraction.decimalDisplay;
           answerInput.placeholder = "contoh: 1/2";
+          answerInput.setAttribute('inputmode', 'text');
       } else if (currentQuizMode === 'percentToFraction') {
           promptEl.textContent = 'Ubah persen ini ke pecahan';
           currentFraction.textContent = quizFraction.percentDisplay;
           answerInput.placeholder = "contoh: 1/2";
+          answerInput.setAttribute('inputmode', 'text');
       }
 
       feedback.textContent = '';
