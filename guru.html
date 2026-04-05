@@ -50,25 +50,35 @@
         </div>
         <p class="text-[11px] text-slate-400 mt-3 font-semibold">Siswa di Database</p>
       </div>
-      <div class="glass-card rounded-3xl p-6 border border-white/10 shadow-2xl relative overflow-hidden flex flex-col justify-between">
+      <div class="glass-card rounded-3xl p-6 border border-white/10 shadow-2xl relative overflow-hidden flex flex-col justify-between group cursor-help transition-all hover:shadow-xl">
         <div>
           <p class="text-[11px] uppercase font-bold text-slate-500 mb-1">Total Latihan Kelas</p>
-          <p class="text-5xl font-black text-emerald-600" id="statTotalSessions">0</p>
+          <p class="text-5xl font-black text-emerald-600 transition-colors" id="statTotalSessions">0</p>
         </div>
-        <p class="text-[11px] text-slate-400 mt-3 font-semibold">Keseluruhan sesi dikerjakan</p>
+        <p class="text-[11px] text-slate-400 mt-3 font-semibold">Arahkan kursor ke sini</p>
+        <div class="absolute inset-0 bg-slate-900/95 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-center p-4 text-[10px] text-slate-100 pointer-events-none z-10" id="ttTotalSessions"></div>
       </div>
-      <div class="glass-card rounded-3xl p-6 border border-white/10 shadow-2xl relative overflow-hidden flex flex-col justify-between">
+      <div class="glass-card rounded-3xl p-6 border border-white/10 shadow-2xl relative overflow-hidden flex flex-col justify-between group cursor-help transition-all hover:shadow-xl">
         <div>
           <p class="text-[11px] uppercase font-bold text-slate-500 mb-1">Nilai Rata-Rata Kelas</p>
-          <p class="text-5xl font-black text-amber-500" id="statGlobalAvg">0</p>
+          <p class="text-5xl font-black text-amber-500 transition-colors" id="statGlobalAvg">0</p>
         </div>
-        <p class="text-[11px] text-slate-400 mt-3 font-semibold">Dari semua mode ujian</p>
+        <p class="text-[11px] text-slate-400 mt-3 font-semibold">Arahkan kursor ke sini</p>
+        <div class="absolute inset-0 bg-slate-900/95 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-center p-4 text-[10px] text-slate-100 pointer-events-none z-10" id="ttGlobalAvg"></div>
       </div>
     </div>
 
     <!-- Papan Peringkat Murid -->
     <div id="tableSection" class="glass-card rounded-3xl p-6 border border-white/10 shadow-2xl mt-8 hidden">
-      <h3 class="text-xl font-bold text-slate-800 mb-4 border-b pb-4">📋 Rekapitulasi Rapor Siswa</h3>
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 border-b pb-4 gap-4">
+        <h3 class="text-xl font-bold text-slate-800">📋 Rekapitulasi Rapor Siswa</h3>
+        <div class="flex bg-slate-100 p-1 rounded-lg">
+          <button class="time-filter-btn px-4 py-1 text-xs font-bold rounded-md bg-white text-indigo-700 shadow-sm" data-tf="all">Semua</button>
+          <button class="time-filter-btn px-4 py-1 text-xs font-bold rounded-md text-slate-500 hover:bg-white/50" data-tf="week">1 Minggu</button>
+          <button class="time-filter-btn px-4 py-1 text-xs font-bold rounded-md text-slate-500 hover:bg-white/50" data-tf="month">1 Bulan</button>
+          <button class="time-filter-btn px-4 py-1 text-xs font-bold rounded-md text-slate-500 hover:bg-white/50" data-tf="year">1 Tahun</button>
+        </div>
+      </div>
       <div class="overflow-x-auto">
         <table class="w-full text-left text-sm text-slate-700">
           <thead class="text-xs text-indigo-900 uppercase bg-indigo-50/70 rounded-t-xl">
@@ -78,7 +88,8 @@
               <th scope="col" class="px-6 py-4 font-black text-center">Total Ujian</th>
               <th scope="col" class="px-6 py-4 font-black">Rata-Rata Skor</th>
               <th scope="col" class="px-6 py-4 font-black">Akurasi</th>
-              <th scope="col" class="px-6 py-4 rounded-tr-lg font-black">Mode Favorit</th>
+              <th scope="col" class="px-6 py-4 font-black">Mode Favorit</th>
+              <th scope="col" class="px-6 py-4 rounded-tr-lg font-black text-rose-600">⚠ Kelemahan Utama</th>
             </tr>
           </thead>
           <tbody id="studentTableBody" class="divide-y divide-slate-200/60 bg-white/40">
@@ -127,7 +138,9 @@
             document.getElementById('loadingIndicator').classList.add('hidden');
             document.getElementById('globalStats').classList.remove('hidden');
             document.getElementById('tableSection').classList.remove('hidden');
-            processAdminData(data.users, data.sessions);
+              globalAllUsers = data.users;
+            globalAllSessions = data.sessions;
+            applyTimeFilter();
           }
         } else {
           document.getElementById('loginAdminBtn').textContent = "Verifikasi PIN";
@@ -153,16 +166,75 @@
       if (!adminInterval) {
          adminInterval = setInterval(fetchAdminData, 3000);
       }
+
+      // Setup UI filters
+      document.querySelectorAll('.time-filter-btn').forEach(btn => {
+         btn.addEventListener('click', () => {
+            document.querySelectorAll('.time-filter-btn').forEach(b => {
+               b.className = 'time-filter-btn px-4 py-1 text-xs font-bold rounded-md text-slate-500 hover:bg-white/50';
+            });
+            btn.className = 'time-filter-btn px-4 py-1 text-xs font-bold rounded-md bg-white text-indigo-700 shadow-sm';
+            currentTimeFilter = btn.dataset.tf;
+            applyTimeFilter();
+         });
+      });
+    }
+
+    let globalAllUsers = [];
+    let globalAllSessions = [];
+    let currentTimeFilter = 'all';
+
+    function applyTimeFilter() {
+      let filteredSessions = globalAllSessions;
+      if (currentTimeFilter !== 'all') {
+         const now = new Date();
+         filteredSessions = globalAllSessions.filter(s => {
+            const sd = new Date(s.createdAt || Date.now());
+            const diffDays = Math.ceil(Math.abs(now - sd) / (1000 * 60 * 60 * 24)); 
+            if(currentTimeFilter === 'week') return diffDays <= 7;
+            if(currentTimeFilter === 'month') return diffDays <= 30;
+            if(currentTimeFilter === 'year') return diffDays <= 365;
+            return true;
+         });
+      }
+      processAdminData(globalAllUsers, filteredSessions);
     }
 
     function processAdminData(users, sessions) {
       document.getElementById('statTotalUsers').textContent = users.length;
-      document.getElementById('statTotalSessions').textContent = sessions.length;
-
+      
+      const ttTotal = document.getElementById('ttTotalSessions');
+      const ttAvg = document.getElementById('ttGlobalAvg');
+      let htmlTotal = '<p class="font-bold border-b border-white/20 pb-1 mb-1">Rincian Latihan</p>';
+      let htmlAvg = '<p class="font-bold border-b border-white/20 pb-1 mb-1">Rata-Rata per Mode</p>';
+      
       let globalScoreSum = 0;
-      sessions.forEach(s => { globalScoreSum += s.totalScore; });
+      const statsPerType = {
+         'Tes Kilat': { count: 0, scores: 0 },
+         'Hitung Cepat': { count: 0, scores: 0 },
+         'Aturan Pembagian': { count: 0, scores: 0 }
+      };
+
+      sessions.forEach(s => { 
+        globalScoreSum += s.totalScore; 
+        if (!statsPerType[s.quizType]) statsPerType[s.quizType] = {count:0, scores:0};
+        statsPerType[s.quizType].count++;
+        statsPerType[s.quizType].scores += s.totalScore;
+      });
+      
+      document.getElementById('statTotalSessions').textContent = sessions.length;
       const globalAvg = sessions.length > 0 ? (globalScoreSum / sessions.length) : 0;
       document.getElementById('statGlobalAvg').textContent = Math.round(globalAvg);
+
+      Object.keys(statsPerType).forEach(key => {
+         const d = statsPerType[key];
+         if(d.count > 0) {
+            htmlTotal += `<div class="flex justify-between py-0.5"><span>${key}</span><span>${d.count}x</span></div>`;
+            htmlAvg += `<div class="flex justify-between py-0.5"><span>${key}</span><span>${Math.round(d.scores / d.count)}</span></div>`;
+         }
+      });
+      if(ttTotal) ttTotal.innerHTML = htmlTotal;
+      if(ttAvg) ttAvg.innerHTML = htmlAvg;
 
       // Map sessions to user objects
       const userMap = {};
@@ -170,7 +242,7 @@
          userMap[u._id] = { ...u, sessions: [] };
       });
 
-      // Some sessions might belong to deleted users, but we'll assign safely
+      // Assign safely
       sessions.forEach(s => {
          if (userMap[s.userId]) {
             userMap[s.userId].sessions.push(s);
@@ -183,6 +255,7 @@
          let totalQs = 0;
          let totalCor = 0;
          const modeCount = {};
+         const errorsCount = {};
 
          sList.forEach(s => {
             totalS += s.totalScore;
@@ -192,6 +265,9 @@
                s.questionsDetail.forEach(q => {
                   totalQs++;
                   if(q.isCorrect) totalCor++;
+                  else {
+                     errorsCount[q.question] = (errorsCount[q.question] || 0) + 1;
+                  }
                });
             }
          });
@@ -205,6 +281,17 @@
             favMode = Object.keys(modeCount).reduce((a, b) => modeCount[a] > modeCount[b] ? a : b);
          }
 
+         // Find top weakness
+         let topWeakness = "-";
+         let maxE = 0;
+         Object.keys(errorsCount).forEach(k => {
+             if (errorsCount[k] > maxE) {
+                 maxE = errorsCount[k];
+                 topWeakness = k; 
+             }
+         });
+         if (topWeakness.length > 25) topWeakness = topWeakness.substring(0, 22) + "...";
+
          return {
             nama: u.nama,
             username: u.username,
@@ -212,6 +299,7 @@
             averageScore: avg,
             accuracy: acc,
             favoriteMode: favMode,
+            topWeakness: topWeakness,
             lastActive: sList.length > 0 ? new Date(Math.max(...sList.map(s => new Date(s.createdAt || 0)))) : null
          };
       });
@@ -224,6 +312,15 @@
 
       userStats.forEach((su, idx) => {
          const accStr = su.accuracy !== null ? su.accuracy + "%" : "-";
+         
+         // Color dynamically
+         let accColor = 'text-slate-500';
+         if (su.accuracy !== null) {
+            if (su.accuracy >= 80) accColor = 'text-emerald-600';
+            else if (su.accuracy >= 50) accColor = 'text-amber-500';
+            else accColor = 'text-rose-600';
+         }
+
          const tr = document.createElement('tr');
          tr.className = 'hover:bg-white/70 transition-colors backdrop-blur-sm';
          
@@ -239,15 +336,16 @@
          let badgeClass = "bg-slate-100 text-slate-500";
          if (su.favoriteMode === 'Tes Kilat') badgeClass = "bg-emerald-100 text-emerald-800";
          else if (su.favoriteMode === 'Hitung Cepat') badgeClass = "bg-amber-100 text-amber-800";
-         else if (su.favoriteMode === 'Aturan Pembagian') badgeClass = "bg-rose-100 text-rose-800";
+         else if (su.favoriteMode === 'Aturan Pembagian') badgeClass = "bg-indigo-100 text-indigo-800";
 
          tr.innerHTML = `
             <td class="px-6 py-4 font-medium text-slate-600">${nameHtml}</td>
             <td class="px-6 py-4 text-center font-mono text-xs text-slate-400">${su.username}</td>
             <td class="px-6 py-4 text-center font-black text-indigo-900">${su.totalExams}</td>
             <td class="px-6 py-4 font-black ${su.averageScore > 0 ? 'text-indigo-600' : 'text-slate-400'}">${Math.round(su.averageScore)}</td>
-            <td class="px-6 py-4 font-bold ${su.accuracy >= 75 ? 'text-emerald-600' : 'text-rose-500'}">${accStr}</td>
+            <td class="px-6 py-4 font-bold ${accColor}">${accStr}</td>
             <td class="px-6 py-4 font-black"><span class="px-3 py-1 text-[10px] rounded-full shadow-sm ${badgeClass}">${su.favoriteMode}</span></td>
+            <td class="px-6 py-4 font-bold text-rose-600 text-xs">${su.topWeakness !== '-' ? '⚠ ' + su.topWeakness : '-'}</td>
          `;
          tbody.appendChild(tr);
       });
