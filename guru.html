@@ -109,23 +109,32 @@
         initDashboard();
     });
 
-    async function initDashboard() {
+    let lastAdminDataStr = '';
+    let adminInterval = null;
+
+    async function fetchAdminData() {
       try {
         const res = await fetch(`${API_URL}/admin/all-data?pin=${adminPinValidated}`);
         const data = await res.json();
         
         if (data.success) {
-          document.getElementById('loginOverlay').classList.add('hidden');
-          document.getElementById('mainDashboard').classList.remove('hidden');
-          document.getElementById('loadingIndicator').classList.add('hidden');
-          document.getElementById('globalStats').classList.remove('hidden');
-          document.getElementById('tableSection').classList.remove('hidden');
-          processAdminData(data.users, data.sessions);
+          const currentStr = JSON.stringify({u: data.users, s: data.sessions});
+          if (currentStr !== lastAdminDataStr) {
+            lastAdminDataStr = currentStr;
+            
+            document.getElementById('loginOverlay').classList.add('hidden');
+            document.getElementById('mainDashboard').classList.remove('hidden');
+            document.getElementById('loadingIndicator').classList.add('hidden');
+            document.getElementById('globalStats').classList.remove('hidden');
+            document.getElementById('tableSection').classList.remove('hidden');
+            processAdminData(data.users, data.sessions);
+          }
         } else {
           document.getElementById('loginAdminBtn').textContent = "Verifikasi PIN";
           const errEl = document.getElementById('adminError');
           errEl.textContent = data.error || "Gagal memuat data dari server.";
           errEl.classList.remove('hidden');
+          if(adminInterval) clearInterval(adminInterval);
         }
       } catch (err) {
         console.error(err);
@@ -133,6 +142,16 @@
         const errEl = document.getElementById('adminError');
         errEl.textContent = "Tidak dapat terhubung ke Backend.";
         errEl.classList.remove('hidden');
+        if(adminInterval) clearInterval(adminInterval);
+      }
+    }
+
+    async function initDashboard() {
+      await fetchAdminData();
+      if (!document.getElementById('loginOverlay').classList.contains('hidden')) return;
+      
+      if (!adminInterval) {
+         adminInterval = setInterval(fetchAdminData, 3000);
       }
     }
 

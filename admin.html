@@ -128,25 +128,38 @@
       currentUser = JSON.parse(stored);
       document.getElementById('studentName').textContent = currentUser.nama;
 
-      try {
-        const res = await fetch(`${API_URL}/analytics/${currentUser._id}`);
-        const data = await res.json();
-        
-        document.getElementById('loadingIndicator').classList.add('hidden');
-        document.getElementById('summaryCards').classList.remove('hidden');
-        document.getElementById('dashboardContent').classList.remove('hidden');
-        const histSection = document.getElementById('historySection');
-        if(histSection) histSection.classList.remove('hidden');
+      let lastSessionsStr = '';
 
-        if (data.success && data.sessions.length > 0) {
-          processAnalytics(data.sessions);
-        } else {
-          showEmptyState();
+      async function fetchAnalytics() {
+        try {
+          const res = await fetch(`${API_URL}/analytics/${currentUser._id}`);
+          const data = await res.json();
+          if (data.success) {
+            const currentStr = JSON.stringify(data.sessions);
+            if (currentStr !== lastSessionsStr) {
+              lastSessionsStr = currentStr;
+              
+              document.getElementById('loadingIndicator').classList.add('hidden');
+              document.getElementById('summaryCards').classList.remove('hidden');
+              document.getElementById('dashboardContent').classList.remove('hidden');
+              const histSection = document.getElementById('historySection');
+              if(histSection) histSection.classList.remove('hidden');
+
+              processAnalytics(data.sessions);
+            }
+          } else {
+            if (!lastSessionsStr) showEmptyState();
+          }
+        } catch (err) {
+          console.error('Error fetching real-time analytics:', err);
+          if (!lastSessionsStr) {
+             document.getElementById('loadingIndicator').innerHTML = '<p class="text-rose-400">Gagal mengambil data dari server. Pastikan Backend berjalan.</p>';
+          }
         }
-      } catch (err) {
-        console.error(err);
-        document.getElementById('loadingIndicator').innerHTML = '<p class="text-rose-400">Gagal mengambil data dari server. Pastikan Backend berjalan.</p>';
       }
+
+      await fetchAnalytics();
+      setInterval(fetchAnalytics, 3000);
     }
 
     function showEmptyState() {
